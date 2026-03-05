@@ -10,8 +10,8 @@ export default function Footer() {
         
         {/* Brand Column */}
         <div className="md:col-span-4 flex flex-col">
-          <div className="relative w-32 h-10 mb-6">
-            <Image src="/shivlogo.png" alt="Shivora Logo" fill className="object-contain" />
+          <div className="relative w-72 h-25 mb-6 ml-[-8vh]">
+            <Image src="/shivlogo1.png" alt="Shivora Logo" fill className="object-contain" />
           </div>
           <p className="text-ash font-medium text-sm leading-relaxed max-w-xs mb-8">
             Masterpieces crafted for eternity. Merging the darkness of obsidian with the purity of pearl.

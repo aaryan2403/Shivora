@@ -59,8 +59,8 @@ export default function Navbar() {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className={`fixed top-0 w-full p-6 md:p-10 flex justify-between items-center z-[100] text-creme ${isHome ? "bg-gradient-to-b from-obsidian/80 to-transparent" : "bg-obsidian shadow-lg"}`}
     >
-      <Link href="/" className="relative w-32 h-10">
-        <Image src="/shivlogo.png" alt="Shivora Logo" fill className="object-contain" priority />
+      <Link href="/" className="relative w-72 h-25 ml-[-8vh]">
+        <Image src="/shivlogo1.png" alt="Shivora Logo" fill className="object-contain" priority />
       </Link>
       
       <div className="hidden md:flex gap-10 text-xs tracking-[0.2em] uppercase font-light items-center">
