@@ -20,33 +20,33 @@ export default function Footer() {
         
         {/* Shop Links */}
         <div className="md:col-span-2 flex flex-col gap-4 text-sm font-medium">
-          <h4 className="font-cinzel text-lg mb-2">Shop</h4>
-          <Link href="/collections?category=All" className="text-ash hover:text-creme transition-colors">All Jewelry</Link>
-          <Link href="/collections?category=Rings" className="text-ash hover:text-creme transition-colors">Rings</Link>
-          <Link href="/collections?category=Necklaces" className="text-ash hover:text-creme transition-colors">Necklaces</Link>
-          <Link href="/collections?category=Earrings" className="text-ash hover:text-creme transition-colors">Earrings</Link>
+          <h4 className="font-serif text-lg mb-2">Shop</h4>
+          <Link href="/collections?category=All" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">All Jewelry</Link>
+          <Link href="/collections?category=Rings" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">Rings</Link>
+          <Link href="/collections?category=Necklaces" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">Necklaces</Link>
+          <Link href="/collections?category=Earrings" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">Earrings</Link>
         </div>
 
         {/* Assistance Links */}
         <div className="md:col-span-2 flex flex-col gap-4 text-sm font-medium">
-          <h4 className="font-cinzel text-lg mb-2">Assistance</h4>
-          <Link href="/contact" className="text-ash hover:text-creme transition-colors">Contact Us</Link>
-          <Link href="/faq" className="text-ash hover:text-creme transition-colors">FAQ</Link>
-          <Link href="/heritage" className="text-ash hover:text-creme transition-colors">About Us</Link>
+          <h4 className="font-serif text-lg mb-2">Assistance</h4>
+          <Link href="/contact" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">Contact Us</Link>
+          <Link href="/faq" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">FAQ</Link>
+          <Link href="/heritage" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">About Us</Link>
         </div>
 
         {/* Newsletter */}
         <div className="md:col-span-4 flex flex-col gap-4">
-          <h4 className="font-cinzel text-lg mb-2">Newsletter</h4>
+          <h4 className="font-serif text-lg mb-2">Newsletter</h4>
           <p className="text-ash font-medium text-sm mb-4">Subscribe to receive updates on exclusive releases.</p>
           <div className="flex border-b border-ash/20 pb-2">
-            <input type="email" placeholder="Email Address" className="bg-transparent outline-none flex-1 text-sm placeholder:text-ash/50 text-creme" />
-            <button className="text-[10px] uppercase tracking-[0.2em] hover:text-ash transition-colors">Subscribe</button>
+            <input type="email" placeholder="Email Address" className="bg-transparent outline-none flex-1 text-sm placeholder:text-ash/50 text-creme transition-colors duration-200" />
+            <button className="text-[10px] uppercase tracking-[0.2em] cursor-pointer hover:text-primary transition-colors duration-200">Subscribe</button>
           </div>
           <div className="flex gap-6 mt-6 text-ash">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-creme transition-colors">IG</a>
-            <a href="https://pinterest.com" target="_blank" rel="noreferrer" className="hover:text-creme transition-colors">PT</a>
-            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-creme transition-colors">X</a>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="cursor-pointer hover:text-creme transition-colors duration-200">IG</a>
+            <a href="https://pinterest.com" target="_blank" rel="noreferrer" className="cursor-pointer hover:text-creme transition-colors duration-200">PT</a>
+            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="cursor-pointer hover:text-creme transition-colors duration-200">X</a>
           </div>
         </div>
 
@@ -54,8 +54,8 @@ export default function Footer() {
         <div className="md:col-span-12 mt-16 pt-8 border-t border-ash/10 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.2em] text-ash/50 gap-4">
           <span>© {new Date().getFullYear()} Shivora. All Rights Reserved.</span>
           <div className="flex gap-6">
-            <Link href="/privacy-policy" className="hover:text-creme transition-colors">Privacy Policy</Link>
-            <Link href="/terms-of-service" className="hover:text-creme transition-colors">Terms of Service</Link>
+            <Link href="/privacy-policy" className="cursor-pointer hover:text-creme transition-colors duration-200">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="cursor-pointer hover:text-creme transition-colors duration-200">Terms of Service</Link>
           </div>
         </div>
       </div>

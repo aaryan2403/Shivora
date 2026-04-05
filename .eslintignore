@@ -1,0 +1,5 @@
+generate-pages.js
+replace-logo.js
+fix_quotes.py
+fetch_images.py
+fix_lint.py

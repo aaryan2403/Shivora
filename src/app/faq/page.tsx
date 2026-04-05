@@ -39,8 +39,8 @@ export default function FaqPage() {
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
       {/* Header */}
-      <header className="p-6 md:p-10 border-b border-ash/10 flex items-center justify-between sticky top-0 bg-obsidian/90 backdrop-blur-md z-50">
-        <Link href="/" className="flex items-center gap-2 text-ash hover:text-creme transition-colors text-xs uppercase tracking-[0.2em]">
+      <header className="py-4 px-6 md:px-10 border-b border-primary/20 flex items-center justify-between sticky top-0 bg-primary/40 backdrop-blur-md shadow-sm z-50">
+        <Link href="/" className="flex items-center gap-2 text-ash cursor-pointer hover:text-creme transition-colors duration-300 text-xs uppercase tracking-[0.2em]">
           <ChevronLeft size={16} /> Back to Store
         </Link>
         <div className="relative w-24 h-8"><Image src="/shivlogo.png" alt="Shivora Logo" fill className="object-contain" priority /></div>
@@ -50,7 +50,7 @@ export default function FaqPage() {
       <div className="max-w-3xl mx-auto px-6 md:px-12 pt-20">
         <div className="text-center mb-16">
           <span className="text-ash tracking-[0.3em] uppercase text-xs mb-4 block">Assistance</span>
-          <h1 className="font-cinzel text-4xl md:text-5xl mb-6">Frequently Asked Questions</h1>
+          <h1 className="font-serif text-4xl md:text-5xl mb-6">Frequently Asked Questions</h1>
           <p className="text-ash font-medium leading-relaxed max-w-xl mx-auto">
             Find answers to common inquiries about our craftsmanship, services, and policies.
           </p>
@@ -61,9 +61,9 @@ export default function FaqPage() {
             <div key={index} className="border border-ash/10 bg-ash/5">
               <button 
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between p-6 text-left hover:bg-ash/5 transition-colors"
+                className="w-full flex items-center justify-between p-6 text-left cursor-pointer hover:bg-ash/5 transition-colors duration-200"
               >
-                <span className="font-cinzel text-lg tracking-wide">{faq.question}</span>
+                <span className="font-serif text-lg tracking-wide">{faq.question}</span>
                 {openIndex === index ? <Minus size={16} className="text-ash" /> : <Plus size={16} className="text-ash" />}
               </button>
               <AnimatePresence>
@@ -87,7 +87,7 @@ export default function FaqPage() {
 
         <div className="mt-20 text-center border-t border-ash/10 pt-16">
           <p className="text-ash mb-6 font-medium">Still have questions?</p>
-          <Link href="/contact" className="px-10 py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold hover:bg-ash hover:text-creme transition-colors inline-block">
+          <Link href="/contact" className="px-10 py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-all duration-300 inline-block hover:scale-105">
             Contact Concierge
           </Link>
         </div>

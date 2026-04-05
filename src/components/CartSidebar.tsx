@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ShoppingCart } from "lucide-react";
+import { X, } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useShop } from "../context/ShopContext";
@@ -29,8 +29,8 @@ export default function CartSidebar() {
             className="fixed top-0 right-0 h-full w-full md:w-[450px] bg-obsidian border-l border-ash/10 z-[120] p-8 flex flex-col text-creme shadow-2xl"
           >
             <div className="flex justify-between items-center mb-12">
-              <h3 className="font-cinzel text-2xl tracking-widest">Your Cart</h3>
-              <button onClick={() => setIsCartOpen(false)} className="text-ash hover:text-creme transition-colors">
+              <h3 className="font-serif text-2xl tracking-widest">Your Cart</h3>
+              <button onClick={() => setIsCartOpen(false)} className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">
                 <X size={24} />
               </button>
             </div>
@@ -45,15 +45,15 @@ export default function CartSidebar() {
                       <Image src={item.image} alt={item.name} fill className="object-cover" />
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
-                      <h4 className="font-cinzel text-lg mb-1">{item.name}</h4>
+                      <h4 className="font-serif text-lg mb-1">{item.name}</h4>
                       <p className="text-sm text-ash mb-3">{item.price}</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4 text-xs tracking-widest border border-ash/10 px-3 py-1 rounded-full">
-                          <button onClick={() => updateCartQuantity(item.id, -1)} className="text-ash hover:text-creme w-4 h-4 flex items-center justify-center">-</button>
+                          <button onClick={() => updateCartQuantity(item.id, -1)} className="text-ash cursor-pointer hover:text-creme w-4 h-4 flex items-center justify-center transition-colors duration-200">-</button>
                           <span>{item.quantity}</span>
-                          <button onClick={() => updateCartQuantity(item.id, 1)} className="text-ash hover:text-creme w-4 h-4 flex items-center justify-center">+</button>
+                          <button onClick={() => updateCartQuantity(item.id, 1)} className="text-ash cursor-pointer hover:text-creme w-4 h-4 flex items-center justify-center transition-colors duration-200">+</button>
                         </div>
-                        <button onClick={() => removeFromCart(item.id)} className="text-[10px] uppercase tracking-widest text-ash hover:text-red-400 transition-colors">Remove</button>
+                        <button onClick={() => removeFromCart(item.id)} className="text-[10px] uppercase tracking-widest text-ash cursor-pointer hover:text-primary transition-colors duration-200">Remove</button>
                       </div>
                     </div>
                   </div>
@@ -65,9 +65,9 @@ export default function CartSidebar() {
               <div className="pt-8 border-t border-ash/10 mt-auto">
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-ash uppercase tracking-widest text-xs">Total</span>
-                  <span className="font-cinzel text-2xl">${cartTotal.toLocaleString()}</span>
+                  <span className="font-serif text-2xl">${cartTotal.toLocaleString()}</span>
                 </div>
-                <Link href="/checkout" className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold hover:bg-ash hover:text-creme transition-colors flex justify-center items-center">
+                <Link href="/checkout" className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-all duration-300 flex justify-center items-center">
                   Checkout Securely
                 </Link>
               </div>

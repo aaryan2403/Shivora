@@ -8,7 +8,7 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
       {/* Header */}
-      <header className="p-6 md:p-10 border-b border-ash/10 flex items-center justify-between sticky top-0 bg-obsidian/90 backdrop-blur-md z-50">
+      <header className="py-4 px-6 md:px-10 border-b border-primary/20 flex items-center justify-between sticky top-0 bg-primary/40 backdrop-blur-md shadow-sm z-50">
         <Link href="/" className="flex items-center gap-2 text-ash hover:text-creme transition-colors text-xs uppercase tracking-[0.2em]">
           <ChevronLeft size={16} /> Back to Store
         </Link>
@@ -83,7 +83,7 @@ export default function ContactPage() {
               <label htmlFor="message" className="text-xs uppercase tracking-widest text-ash">Message</label>
               <textarea id="message" rows={5} className="w-full bg-obsidian border border-ash/20 p-3 text-creme outline-none focus:border-creme transition-colors"></textarea>
             </div>
-            <button type="submit" className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold hover:bg-ash hover:text-creme transition-colors">
+            <button type="submit" className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-colors duration-300">
               Send Message
             </button>
           </form>

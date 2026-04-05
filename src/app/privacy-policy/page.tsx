@@ -8,7 +8,7 @@ export default function PrivacyPolicyPage() {
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
       {/* Header */}
-      <header className="p-6 md:p-10 border-b border-ash/10 flex items-center justify-between sticky top-0 bg-obsidian/90 backdrop-blur-md z-50">
+      <header className="py-4 px-6 md:px-10 border-b l-auto w-[20vw] border-primary/20 flex items-center justify-between sticky top-0 bg-primary/40 backdrop-blur-md shadow-sm z-50">
         <Link href="/" className="flex items-center gap-2 text-ash hover:text-creme transition-colors text-xs uppercase tracking-[0.2em]">
           <ChevronLeft size={16} /> Back to Store
         </Link>
@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="font-cinzel text-xl text-creme mb-4">1. Introduction</h2>
             <p>
-              Shivora ("we," "our," or "us") respects your privacy and is committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website (regardless of where you visit it from) and tell you about your privacy rights and how the law protects you.
+              Shivora (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) respects your privacy and is committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website (regardless of where you visit it from) and tell you about your privacy rights and how the law protects you.
             </p>
           </section>
 
@@ -53,20 +53,30 @@ export default function PrivacyPolicyPage() {
             </p>
             <ul className="list-disc pl-5 space-y-2 mt-4 marker:text-creme">
               <li>Where we need to perform the contract we are about to enter into or have entered into with you.</li>
-              <li>Where it is necessary for our legitimate interests (or those of a third party) and your interests and fundamental rights do not override those interests.</li>
-              <li>Where we need to comply with a legal or regulatory obligation.</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="font-cinzel text-xl text-creme mb-4">4. Data Security</h2>
+            <h2 className="font-cinzel text-xl text-creme mb-4">2. How We Use Your Information</h2>
+            <p>
+              We use the information we collect to process your transactions, provide customer support, personalize your shopping experience, and send you updates about new collections or exclusive events (if you have opted in). The terms &quot;we&quot;, &quot;us&quot;, and &quot;our&quot; refer to Shivora.
+            </p>
+            <div className="mt-4 p-6 border border-ash/10 bg-ash/5">
+              <p className="text-creme mb-1">Shivora Privacy Team</p>
+              <p className="mb-1">Email: privacy@shivora.com</p>
+              <p>123 Obsidian Avenue, New York, NY 10012, USA</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="font-cinzel text-xl text-creme mb-4">3. Data Security</h2>
             <p>
               We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorized way, altered or disclosed. In addition, we limit access to your personal data to those employees, agents, contractors and other third parties who have a business need to know.
             </p>
           </section>
 
           <section>
-            <h2 className="font-cinzel text-xl text-creme mb-4">5. Contact Details</h2>
+            <h2 className="font-cinzel text-xl text-creme mb-4">4. Contact Details</h2>
             <p>
               If you have any questions about this privacy policy or our privacy practices, please contact our data privacy manager at:
             </p>

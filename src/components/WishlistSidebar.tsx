@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Heart } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image";
 import { useShop } from "../context/ShopContext";
 
@@ -23,8 +23,8 @@ export default function WishlistSidebar() {
             className="fixed top-0 right-0 h-full w-full md:w-[450px] bg-obsidian border-l border-ash/10 z-[120] p-8 flex flex-col text-creme shadow-2xl"
           >
             <div className="flex justify-between items-center mb-12">
-              <h3 className="font-cinzel text-2xl tracking-widest">Wishlist</h3>
-              <button onClick={() => setIsWishlistOpen(false)} className="text-ash hover:text-creme transition-colors">
+              <h3 className="font-serif text-2xl tracking-widest">Wishlist</h3>
+              <button onClick={() => setIsWishlistOpen(false)} className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">
                 <X size={24} />
               </button>
             </div>
@@ -39,16 +39,16 @@ export default function WishlistSidebar() {
                       <Image src={item.image} alt={item.name} fill className="object-cover" />
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
-                      <h4 className="font-cinzel text-lg mb-1">{item.name}</h4>
+                      <h4 className="font-serif text-lg mb-1">{item.name}</h4>
                       <p className="text-sm text-ash mb-3">{item.price}</p>
                       <div className="flex items-center justify-between">
                         <button 
                           onClick={() => { addToCart(item); toggleWishlist(item); setIsCartOpen(true); setIsWishlistOpen(false); }} 
-                          className="text-[10px] uppercase tracking-widest text-creme hover:text-ash transition-colors border-b border-ash/20 pb-1"
+                          className="text-[10px] uppercase tracking-widest text-creme cursor-pointer hover:text-primary transition-colors duration-200 border-b border-ash/20 pb-1"
                         >
                           Move to Cart
                         </button>
-                        <button onClick={() => toggleWishlist(item)} className="text-[10px] uppercase tracking-widest text-ash hover:text-red-400 transition-colors">Remove</button>
+                        <button onClick={() => toggleWishlist(item)} className="text-[10px] uppercase tracking-widest text-ash cursor-pointer hover:text-primary transition-colors duration-200">Remove</button>
                       </div>
                     </div>
                   </div>

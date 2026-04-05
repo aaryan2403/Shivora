@@ -8,7 +8,7 @@ export default function HeritagePage() {
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
       {/* Header */}
-      <header className="p-6 md:p-10 border-b border-ash/10 flex items-center justify-between sticky top-0 bg-obsidian/90 backdrop-blur-md z-50">
+      <header className="py-4 px-6 md:px-10 border-b border-primary/20 flex items-center justify-between sticky top-0 bg-primary/40 backdrop-blur-md shadow-sm z-50">
         <Link href="/" className="flex items-center gap-2 text-ash hover:text-creme transition-colors text-xs uppercase tracking-[0.2em]">
           <ChevronLeft size={16} /> Back to Store
         </Link>
@@ -19,7 +19,7 @@ export default function HeritagePage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
         <Image 
-          src="https://images.unsplash.com/photo-1573408301145-b98c46544ea0?q=80&w=2000&auto=format&fit=crop" 
+          src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=2000&auto=format&fit=crop" 
           alt="Shivora Workshop" 
           fill 
           className="object-cover grayscale contrast-125 opacity-40"
@@ -37,12 +37,12 @@ export default function HeritagePage() {
         {/* Story Section 1 */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
-            <h2 className="font-cinzel text-3xl mb-6">The Beginning</h2>
+            <h2 className="font-cinzel text-3xl mb-6">&quot;Beauty lies in the balance of elements.&quot;</h2>
             <p className="text-ash font-medium leading-relaxed mb-6">
               Founded in the heart of artisan Europe, Shivora began as a small family workshop dedicated to the art of gemstone cutting. Our founder, Elias Thorne, believed that every stone held a soul, waiting to be revealed by the hand of a master.
             </p>
             <p className="text-ash font-medium leading-relaxed">
-              This philosophy of "revealing the soul" remains the cornerstone of our house today. We do not simply manufacture jewelry; we curate artifacts of beauty that are destined to become family heirlooms.
+              This philosophy of &quot;revealing the soul&quot; remains the cornerstone of our house today. We do not simply manufacture jewelry; we curate artifacts of beauty that are destined to become family heirlooms.
             </p>
           </div>
           <div className="relative aspect-[4/5] bg-ash/10">
@@ -79,7 +79,7 @@ export default function HeritagePage() {
         {/* Quote */}
         <section className="text-center border-y border-ash/10 py-24">
           <blockquote className="font-cinzel text-2xl md:text-4xl italic leading-relaxed mb-8">
-            "Jewelry is not merely an accessory. It is a silent language of elegance, a personal history worn against the skin."
+            &quot;Jewelry is not merely an accessory. It is a silent language of elegance, a personal history worn against the skin.&quot;
           </blockquote>
           <cite className="text-ash tracking-[0.2em] uppercase text-xs not-italic">- Elias Thorne, Founder</cite>
         </section>

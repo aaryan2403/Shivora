@@ -10,7 +10,10 @@ export type Product = {
   collection?: string;
   price: string; 
   image: string;
+  images?: string[];
+  description?: string;
   isHighJewelry?: boolean;
+  stock?: number;
 };
 export type CartItem = Product & { quantity: number };
 
@@ -28,15 +31,20 @@ interface ShopContextType {
   isSearchOpen: boolean;
   isAuthOpen: boolean;
   searchQuery: string;
+  selectedProduct: Product | null;
+  isProductModalOpen: boolean;
   
   // Actions
   addToCart: (product: Product) => void;
   removeFromCart: (id: number) => void;
   updateCartQuantity: (id: number, delta: number) => void;
+  clearCart: () => void;
   toggleWishlist: (product: Product) => void;
   login: (email: string) => void;
   logout: () => void;
   setSearchQuery: (query: string) => void;
+  openProduct: (product: Product) => void;
+  closeProduct: () => void;
   
   // UI Toggles
   setIsCartOpen: (v: boolean) => void;
@@ -57,6 +65,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Product View State
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   // Load from localStorage
   useEffect(() => {
@@ -65,9 +77,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       const savedWishlist = localStorage.getItem('shivora_wishlist');
       const savedUser = localStorage.getItem('shivora_user');
       
-      if (savedCart) try { setCart(JSON.parse(savedCart)); } catch (e) {}
-      if (savedWishlist) try { setWishlist(JSON.parse(savedWishlist)); } catch (e) {}
-      if (savedUser) try { setUser(JSON.parse(savedUser)); } catch (e) {}
+      if (savedCart) { try { const parsed = JSON.parse(savedCart); setTimeout(() => setCart(parsed), 0); } catch (e) { console.error(e); } }
+      if (savedWishlist) { try { const parsed = JSON.parse(savedWishlist); setTimeout(() => setWishlist(parsed), 0); } catch (e) { console.error(e); } }
+      if (savedUser) { try { const parsed = JSON.parse(savedUser); setTimeout(() => setUser(parsed), 0); } catch (e) { console.error(e); } }
     }
   }, []);
 
@@ -109,6 +121,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const clearCart = () => {
+    setCart([]);
+  };
+
   const toggleWishlist = (product: Product) => {
     setWishlist(prev => {
       if (prev.find(item => item.id === product.id)) {
@@ -127,12 +143,23 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const openProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setIsProductModalOpen(true);
+  };
+
+  const closeProduct = () => {
+    setIsProductModalOpen(false);
+    setTimeout(() => setSelectedProduct(null), 300); // wait for animation
+  };
+
   return (
     <ShopContext.Provider value={{
       cart, wishlist, user,
       isCartOpen, isWishlistOpen, isSearchOpen, isAuthOpen, searchQuery,
-      addToCart, removeFromCart, updateCartQuantity, toggleWishlist,
-      login, logout, setSearchQuery,
+      selectedProduct, isProductModalOpen,
+      addToCart, removeFromCart, updateCartQuantity, clearCart, toggleWishlist,
+      login, logout, setSearchQuery, openProduct, closeProduct,
       setIsCartOpen, setIsWishlistOpen, setIsSearchOpen, setIsAuthOpen
     }}>
       {children}

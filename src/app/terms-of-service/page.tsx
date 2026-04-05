@@ -8,7 +8,7 @@ export default function TermsOfServicePage() {
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
       {/* Header */}
-      <header className="p-6 md:p-10 border-b border-ash/10 flex items-center justify-between sticky top-0 bg-obsidian/90 backdrop-blur-md z-50">
+      <header className="py-4 px-6 md:px-10 border-b border-primary/20 flex items-center justify-between sticky top-0 bg-primary/40 backdrop-blur-md shadow-sm z-50">
         <Link href="/" className="flex items-center gap-2 text-ash hover:text-creme transition-colors text-xs uppercase tracking-[0.2em]">
           <ChevronLeft size={16} /> Back to Store
         </Link>
@@ -29,7 +29,7 @@ export default function TermsOfServicePage() {
           <section>
             <h2 className="font-cinzel text-xl text-creme mb-4">1. Acceptance of Terms</h2>
             <p>
-              By accessing and using the Shivora website ("Site") and purchasing our products, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use our Site.
+              Welcome to Shivora. By accessing or using our website, you agree to comply with and be bound by the following terms and conditions. These terms govern your use of our site and the purchase of any products. Please read them carefully. The terms &quot;we&quot;, &quot;us&quot;, and &quot;our&quot; refer to Shivora.
             </p>
           </section>
 

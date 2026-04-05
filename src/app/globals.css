@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FFFFE3;
-  --foreground: 	#231605;
-  
-  --color-obsidian: #FFFFE3;
-  --color-ash: #231605;
-  --color-creme: 	#231605;
-  --color-pearl: #231605;
+  --background: #F5F0E6;
+  --foreground: #4b3c1e;
+
+  --color-obsidian: #F5F0E6;
+  --color-ash: #5b300b;
+  --color-creme: #5f3612;
+  --color-pearl: #2e260f;
+  --color-primary: #e3b388;
+  --color-secondary: #c1a97a;
 }
 
 @theme inline {
@@ -17,12 +19,16 @@
   --color-ash: var(--color-ash);
   --color-creme: var(--color-creme);
   --color-pearl: var(--color-pearl);
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
   --font-sans: var(--font-montserrat), sans-serif;
-  --font-cinzel: var(--font-cinzel), serif;
+  --font-serif: var(--font-cormorant), serif;
 }
 
 body {
   background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;
@@ -35,7 +41,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-creme);
+  background: var(--color-obsidian);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -44,5 +50,5 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-obsidian);
+  background: var(--color-creme);
 }

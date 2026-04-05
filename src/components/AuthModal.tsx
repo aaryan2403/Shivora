@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, User, Mail, Lock, ArrowRight } from "lucide-react";
+import { X, Mail, Lock, ArrowRight } from "lucide-react";
 import { useShop } from "../context/ShopContext";
 import { useState } from "react";
 
@@ -40,7 +40,7 @@ export default function AuthModal() {
           >
             <button 
               onClick={() => setIsAuthOpen(false)}
-              className="absolute top-4 right-4 text-ash hover:text-creme transition-colors"
+              className="absolute top-4 right-4 text-ash cursor-pointer hover:text-creme transition-colors duration-200"
             >
               <X size={20} />
             </button>
@@ -80,17 +80,17 @@ export default function AuthModal() {
 
               <button 
                 type="submit"
-                className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold hover:bg-ash hover:text-creme transition-colors flex justify-center items-center gap-2 group"
+                className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-all duration-300 flex justify-center items-center gap-2 group"
               >
                 {isLogin ? "Sign In" : "Create Account"}
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </form>
 
             <div className="mt-8 text-center">
               <button 
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-ash text-xs tracking-wider border-b border-transparent hover:border-ash transition-all pb-1"
+                className="text-ash text-xs tracking-wider cursor-pointer border-b border-transparent hover:border-ash hover:text-creme transition-all duration-200 pb-1"
               >
                 {isLogin ? "Don't have an account? Register" : "Already have an account? Sign In"}
               </button>

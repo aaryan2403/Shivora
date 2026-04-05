@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useShop } from "../context/ShopContext";
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SearchOverlay() {
@@ -52,7 +52,7 @@ export default function SearchOverlay() {
             <div className="max-w-4xl mx-auto relative">
               <button 
                 onClick={() => setIsSearchOpen(false)}
-                className="absolute -top-6 -right-4 text-ash hover:text-creme transition-colors p-2"
+                className="absolute -top-6 -right-4 text-ash cursor-pointer hover:text-creme transition-colors duration-200 p-2"
               >
                 <X size={24} />
               </button>
@@ -66,7 +66,7 @@ export default function SearchOverlay() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Search collections, products..."
-                  className="w-full bg-transparent text-2xl md:text-4xl font-cinzel text-creme placeholder:text-ash/50 outline-none"
+                  className="w-full bg-transparent text-2xl md:text-4xl font-serif text-creme placeholder:text-ash/50 outline-none transition-colors duration-200"
                 />
               </div>
 
@@ -77,7 +77,7 @@ export default function SearchOverlay() {
                     <button 
                       key={term}
                       onClick={() => { setSearchQuery(term); handleSearch(term); }}
-                      className="text-sm text-creme/70 hover:text-creme border border-ash/10 px-4 py-2 rounded-full hover:border-creme/50 transition-all"
+                      className="text-sm text-creme/70 cursor-pointer hover:text-creme border border-ash/10 px-4 py-2 rounded-full hover:border-primary/50 transition-all duration-200"
                     >
                       {term}
                     </button>

@@ -6,7 +6,7 @@ export default function AccountPage() {
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
       {/* Header */}
-      <header className="p-6 md:p-10 border-b border-ash/10 flex items-center justify-between">
+      <header className="py-4 px-6 md:px-10 border-b border-primary/20 flex items-center justify-between sticky top-0 bg-primary/40 backdrop-blur-md shadow-sm z-50">
         <Link href="/" className="flex items-center gap-2 text-ash hover:text-creme transition-colors text-xs uppercase tracking-[0.2em]">
           <ChevronLeft size={16} /> Back to Store
         </Link>
@@ -23,7 +23,7 @@ export default function AccountPage() {
         
         <Link 
           href="/"
-          className="mt-16 px-10 py-4 border border-ash/20 text-xs tracking-[0.2em] uppercase hover:bg-creme hover:text-obsidian transition-colors inline-block"
+          className="mt-16 px-10 py-4 border border-ash/20 text-xs tracking-[0.2em] uppercase cursor-pointer hover:bg-primary hover:border-primary hover:text-creme transition-all duration-300 inline-block"
         >
           Return Home
         </Link>
