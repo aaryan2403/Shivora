@@ -63,16 +63,16 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-xs uppercase tracking-widest text-ash">Name</label>
-                <input type="text" id="name" className="w-full bg-obsidian border border-ash/20 p-3 text-creme outline-none focus:border-creme transition-colors" />
+                <input type="text" id="name" name="name" className="w-full bg-obsidian border border-ash/20 p-3 text-creme outline-none focus:border-creme transition-colors" />
               </div>
               <div className="space-y-2">
                 <label htmlFor="email" className="text-xs uppercase tracking-widest text-ash">Email</label>
-                <input type="email" id="email" className="w-full bg-obsidian border border-ash/20 p-3 text-creme outline-none focus:border-creme transition-colors" />
+                <input type="email" id="email" name="email" className="w-full bg-obsidian border border-ash/20 p-3 text-creme outline-none focus:border-creme transition-colors" />
               </div>
             </div>
             <div className="space-y-2">
               <label htmlFor="subject" className="text-xs uppercase tracking-widest text-ash">Subject</label>
-              <select id="subject" className="w-full bg-obsidian border border-ash/20 p-3 text-creme outline-none focus:border-creme transition-colors">
+              <select id="subject" name="subject" className="w-full bg-obsidian border border-ash/20 p-3 text-creme outline-none focus:border-creme transition-colors">
                 <option>General Inquiry</option>
                 <option>Order Assistance</option>
                 <option>Bespoke Request</option>
@@ -81,7 +81,7 @@ export default function ContactPage() {
             </div>
             <div className="space-y-2">
               <label htmlFor="message" className="text-xs uppercase tracking-widest text-ash">Message</label>
-              <textarea id="message" rows={5} className="w-full bg-obsidian border border-ash/20 p-3 text-creme outline-none focus:border-creme transition-colors"></textarea>
+              <textarea id="message" name="message" rows={5} className="w-full bg-obsidian border border-ash/20 p-3 text-creme outline-none focus:border-creme transition-colors"></textarea>
             </div>
             <button type="submit" className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-colors duration-300">
               Send Message

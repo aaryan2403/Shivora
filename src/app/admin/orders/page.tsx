@@ -111,8 +111,10 @@ export default function AdminOrdersPage() {
                     </div>
                     
                     <div className="flex items-center gap-3">
-                      <label className="text-xs uppercase tracking-[0.2em] text-ash">Status</label>
+                      <label htmlFor={`order-status-${order.id}`} className="text-xs uppercase tracking-[0.2em] text-ash">Status</label>
                       <select 
+                        id={`order-status-${order.id}`}
+                        name="status"
                         value={order.status}
                         onChange={(e) => updateOrderStatus(order.id, e.target.value)}
                         disabled={updatingId === order.id}

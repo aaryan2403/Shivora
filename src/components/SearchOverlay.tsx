@@ -62,6 +62,8 @@ export default function SearchOverlay() {
                 <input
                   ref={inputRef}
                   type="text"
+                  id="search-overlay-query"
+                  name="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleKeyDown}

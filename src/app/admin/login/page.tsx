@@ -36,6 +36,8 @@ function LoginForm() {
     <form onSubmit={onSubmit} className="space-y-4">
       <input
         type="email"
+        id="admin-email"
+        name="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
@@ -45,6 +47,8 @@ function LoginForm() {
 
       <input
         type="password"
+        id="admin-password"
+        name="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"

@@ -172,6 +172,8 @@ export default function AdminPage() {
 
             <form onSubmit={onSave} className="space-y-4">
               <input
+                id="product-name"
+                name="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Product name"
@@ -181,6 +183,8 @@ export default function AdminPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <select
+                  id="product-category"
+                  name="category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm outline-none focus:border-creme/40"
@@ -199,6 +203,8 @@ export default function AdminPage() {
                 </select>
 
                 <select
+                  id="product-collection"
+                  name="collection"
                   value={collection}
                   onChange={(e) => setCollection(e.target.value)}
                   className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm outline-none focus:border-creme/40"
@@ -213,6 +219,8 @@ export default function AdminPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <input
+                  id="product-price"
+                  name="price"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   placeholder="Price (e.g. $2,400)"
@@ -222,6 +230,8 @@ export default function AdminPage() {
                 
                 <input
                   type="number"
+                  id="product-stock"
+                  name="stock"
                   value={stock}
                   onChange={(e) => setStock(e.target.value ? Number(e.target.value) : "")}
                   placeholder="Stock count"
@@ -230,6 +240,8 @@ export default function AdminPage() {
               </div>
 
               <textarea
+                id="product-description"
+                name="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Description"
@@ -240,6 +252,8 @@ export default function AdminPage() {
                 <span className="block mb-2">Images (select multiple)</span>
                 <input
                   type="file"
+                  id="product-images"
+                  name="images"
                   accept="image/*"
                   multiple
                   onChange={(e) => setImageFiles(e.target.files ? Array.from(e.target.files) : [])}
@@ -256,6 +270,8 @@ export default function AdminPage() {
               <label className="flex items-center gap-3 text-sm text-ash">
                 <input
                   type="checkbox"
+                  id="product-high-jewelry"
+                  name="isHighJewelry"
                   checked={isHighJewelry}
                   onChange={(e) => setIsHighJewelry(e.target.checked)}
                 />

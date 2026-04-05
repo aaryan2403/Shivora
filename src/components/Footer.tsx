@@ -40,7 +40,7 @@ export default function Footer() {
           <h4 className="font-serif text-lg mb-2">Newsletter</h4>
           <p className="text-ash font-medium text-sm mb-4">Subscribe to receive updates on exclusive releases.</p>
           <div className="flex border-b border-ash/20 pb-2">
-            <input type="email" placeholder="Email Address" className="bg-transparent outline-none flex-1 text-sm placeholder:text-ash/50 text-creme transition-colors duration-200" />
+            <input id="newsletter-email" name="email" type="email" placeholder="Email Address" className="bg-transparent outline-none flex-1 text-sm placeholder:text-ash/50 text-creme transition-colors duration-200" />
             <button className="text-[10px] uppercase tracking-[0.2em] cursor-pointer hover:text-primary transition-colors duration-200">Subscribe</button>
           </div>
           <div className="flex gap-6 mt-6 text-ash">

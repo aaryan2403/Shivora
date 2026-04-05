@@ -142,16 +142,16 @@ export default function CheckoutPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
-                <label className="text-xs uppercase tracking-[0.2em] text-ash">First Name</label>
-                <input required type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
+                <label htmlFor="checkout-first-name" className="text-xs uppercase tracking-[0.2em] text-ash">First Name</label>
+                <input id="checkout-first-name" required type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-xs uppercase tracking-[0.2em] text-ash">Last Name</label>
-                <input required type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
+                <label htmlFor="checkout-last-name" className="text-xs uppercase tracking-[0.2em] text-ash">Last Name</label>
+                <input id="checkout-last-name" required type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
               </div>
               <div className="flex flex-col gap-2 md:col-span-2">
-                <label className="text-xs uppercase tracking-[0.2em] text-ash">Email Address</label>
-                <input required type="email" name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
+                <label htmlFor="checkout-email" className="text-xs uppercase tracking-[0.2em] text-ash">Email Address</label>
+                <input id="checkout-email" required type="email" name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
               </div>
             </div>
           </section>
@@ -164,16 +164,16 @@ export default function CheckoutPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2 md:col-span-2">
-                <label className="text-xs uppercase tracking-[0.2em] text-ash">Street Address</label>
-                <input required type="text" name="address" value={formData.address} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
+                <label htmlFor="checkout-address" className="text-xs uppercase tracking-[0.2em] text-ash">Street Address</label>
+                <input id="checkout-address" required type="text" name="address" value={formData.address} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-xs uppercase tracking-[0.2em] text-ash">City</label>
-                <input required type="text" name="city" value={formData.city} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
+                <label htmlFor="checkout-city" className="text-xs uppercase tracking-[0.2em] text-ash">City</label>
+                <input id="checkout-city" required type="text" name="city" value={formData.city} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-xs uppercase tracking-[0.2em] text-ash">Postal / Zip Code</label>
-                <input required type="text" name="zipCode" value={formData.zipCode} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
+                <label htmlFor="checkout-zip-code" className="text-xs uppercase tracking-[0.2em] text-ash">Postal / Zip Code</label>
+                <input id="checkout-zip-code" required type="text" name="zipCode" value={formData.zipCode} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
               </div>
             </div>
           </section>
@@ -186,26 +186,28 @@ export default function CheckoutPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2 md:col-span-2">
-                <label className="text-xs uppercase tracking-[0.2em] text-ash">Card Number</label>
-                <input required type="text" name="cardNumber" placeholder="0000 0000 0000 0000" value={formData.cardNumber} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium placeholder:text-ash/30" />
+                <label htmlFor="checkout-card-number" className="text-xs uppercase tracking-[0.2em] text-ash">Card Number</label>
+                <input id="checkout-card-number" required type="text" name="cardNumber" placeholder="0000 0000 0000 0000" value={formData.cardNumber} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium placeholder:text-ash/30" />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-xs uppercase tracking-[0.2em] text-ash">Expiry Date</label>
-                <input required type="text" name="expiry" placeholder="MM/YY" value={formData.expiry} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium placeholder:text-ash/30" />
+                <label htmlFor="checkout-expiry" className="text-xs uppercase tracking-[0.2em] text-ash">Expiry Date</label>
+                <input id="checkout-expiry" required type="text" name="expiry" placeholder="MM/YY" value={formData.expiry} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium placeholder:text-ash/30" />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-xs uppercase tracking-[0.2em] text-ash">CVC</label>
-                <input required type="text" name="cvc" placeholder="123" value={formData.cvc} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium placeholder:text-ash/30" />
+                <label htmlFor="checkout-cvc" className="text-xs uppercase tracking-[0.2em] text-ash">CVC</label>
+                <input id="checkout-cvc" required type="text" name="cvc" placeholder="123" value={formData.cvc} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium placeholder:text-ash/30" />
               </div>
             </div>
           </section>
 
           {/* Terms and Submit */}
           <section className="pt-4">
-            <label className="flex items-start gap-4 cursor-pointer mb-8 group">
+            <label htmlFor="checkout-terms" className="flex items-start gap-4 cursor-pointer mb-8 group">
               <div className="relative flex items-center justify-center mt-1">
                 <input 
+                  id="checkout-terms"
                   type="checkbox" 
+                  name="termsAccepted"
                   className="peer sr-only"
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}

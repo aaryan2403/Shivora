@@ -58,6 +58,8 @@ export default function AuthModal() {
                   <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-ash" />
                   <input
                     type="email"
+                    id="auth-email"
+                    name="email"
                     placeholder="Email Address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -69,6 +71,8 @@ export default function AuthModal() {
                   <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-ash" />
                   <input
                     type="password"
+                    id="auth-password"
+                    name="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

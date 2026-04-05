@@ -11,6 +11,8 @@ function getRequiredEnv(...names: string[]) {
 }
 
 export function getSupabaseUrl() {
+  const value = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  console.log("Has NEXT_PUBLIC_SUPABASE_URL?", Boolean(value), value);
   return getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL");
 }
 
