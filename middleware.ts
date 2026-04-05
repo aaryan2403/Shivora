@@ -1,33 +1,20 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-type CookieOptions = {
-  domain?: string;
-  expires?: Date | number;
-  httpOnly?: boolean;
-  maxAge?: number;
-  path?: string;
-  sameSite?: "lax" | "strict" | "none";
-  secure?: boolean;
-};
-
-type CookieToSet = { name: string; value: string; options: CookieOptions };
-
 function createSupabaseClient(request: NextRequest, response: NextResponse) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !anonKey) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
-  }
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "http://localhost:54321";
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4eHgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY5MzU4ODQzNSwiZXhwIjoyMDA5MTY0NDM1fQ.xxx";
 
   return createServerClient(url, anonKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll(cookiesToSet: CookieToSet[]) {
-        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value));
+        cookiesToSet.forEach(({ name, value, options }) =>
+          response.cookies.set(name, value, options)
+        );
       },
     },
   });
