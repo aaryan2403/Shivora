@@ -1,9 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { getSupabaseBrowserKey, getSupabaseUrl } from "@/lib/supabase/env";
 
 function createSupabaseClient(request: NextRequest, response: NextResponse) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const url = getSupabaseUrl();
+  const anonKey = getSupabaseBrowserKey();
 
   return createServerClient(url, anonKey, {
     cookies: {
