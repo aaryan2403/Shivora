@@ -35,18 +35,14 @@ export default function Footer() {
           <Link href="/heritage" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">About Us</Link>
         </div>
 
-        {/* Newsletter */}
+        {/* Social */}
         <div className="md:col-span-4 flex flex-col gap-4">
-          <h4 className="font-serif text-lg mb-2">Newsletter</h4>
-          <p className="text-ash font-medium text-sm mb-4">Subscribe to receive updates on exclusive releases.</p>
-          <div className="flex border-b border-ash/20 pb-2">
-            <input id="newsletter-email" name="email" type="email" placeholder="Email Address" className="bg-transparent outline-none flex-1 text-sm placeholder:text-ash/50 text-creme transition-colors duration-200" />
-            <button className="text-[10px] uppercase tracking-[0.2em] cursor-pointer hover:text-primary transition-colors duration-200">Subscribe</button>
-          </div>
-          <div className="flex gap-6 mt-6 text-ash">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="cursor-pointer hover:text-creme transition-colors duration-200">IG</a>
-            <a href="https://pinterest.com" target="_blank" rel="noreferrer" className="cursor-pointer hover:text-creme transition-colors duration-200">PT</a>
-            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="cursor-pointer hover:text-creme transition-colors duration-200">X</a>
+          <h4 className="font-serif text-lg mb-2">Connect</h4>
+          <p className="text-ash font-medium text-sm mb-4">Follow us for exclusive reveals and behind-the-scenes craftsmanship.</p>
+          <div className="flex gap-6 text-ash">
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="cursor-pointer hover:text-creme transition-colors duration-200">IG</a>
+            <a href="https://pinterest.com" target="_blank" rel="noreferrer" aria-label="Pinterest" className="cursor-pointer hover:text-creme transition-colors duration-200">PT</a>
+            <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter / X" className="cursor-pointer hover:text-creme transition-colors duration-200">X</a>
           </div>
         </div>
 

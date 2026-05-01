@@ -45,6 +45,7 @@ type DbProduct = {
   description: string | null;
   is_high_jewelry: boolean | null;
   stock: number | null;
+  color: string | null;
 };
 
 function mapProduct(row: DbProduct): Product {
@@ -59,6 +60,7 @@ function mapProduct(row: DbProduct): Product {
     description: row.description ?? undefined,
     isHighJewelry: row.is_high_jewelry ?? undefined,
     stock: row.stock ?? undefined,
+    color: row.color ?? undefined,
   };
 }
 
@@ -101,6 +103,7 @@ type CreateProductBody = {
   description?: string;
   isHighJewelry?: boolean;
   stock?: number;
+  color?: string;
 };
 
 export async function POST(request: NextRequest) {
@@ -120,7 +123,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const insertRow = {
+  const insertRow: Record<string, unknown> = {
     name: body.name,
     category: body.category,
     collection: body.collection ?? null,
@@ -132,15 +135,29 @@ export async function POST(request: NextRequest) {
     stock: body.stock ?? null,
   };
 
-  const { data, error } = await supabase
+  if (body.color !== undefined) insertRow.color = body.color;
+
+  let result = await supabase
     .from("products")
     .insert(insertRow)
-    .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock")
+    .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock,color")
     .single();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  // If color column doesn't exist, retry without it
+  if (result.error && result.error.message?.includes("color")) {
+    delete insertRow.color;
+    result = await supabase
+      .from("products")
+      .insert(insertRow)
+      .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock")
+      .single();
   }
+
+  if (result.error) {
+    return NextResponse.json({ error: result.error.message }, { status: 400 });
+  }
+
+  const data = result.data;
 
   return NextResponse.json({ product: mapProduct(data as DbProduct) }, { status: 201 });
 }
@@ -159,7 +176,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Missing product id" }, { status: 400 });
   }
 
-  const updateRow: any = {};
+  const updateRow: Record<string, unknown> = {};
   if (body.name !== undefined) updateRow.name = body.name;
   if (body.category !== undefined) updateRow.category = body.category;
   if (body.collection !== undefined) updateRow.collection = body.collection;
@@ -169,17 +186,31 @@ export async function PUT(request: NextRequest) {
   if (body.description !== undefined) updateRow.description = body.description;
   if (body.isHighJewelry !== undefined) updateRow.is_high_jewelry = body.isHighJewelry;
   if (body.stock !== undefined) updateRow.stock = body.stock;
+  if (body.color !== undefined) updateRow.color = body.color;
 
-  const { data, error } = await supabase
+  let result = await supabase
     .from("products")
     .update(updateRow)
     .eq("id", body.id)
-    .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock")
+    .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock,color")
     .single();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  // If color column doesn't exist, retry without it
+  if (result.error && result.error.message?.includes("color")) {
+    delete updateRow.color;
+    result = await supabase
+      .from("products")
+      .update(updateRow)
+      .eq("id", body.id)
+      .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock")
+      .single();
   }
+
+  if (result.error) {
+    return NextResponse.json({ error: result.error.message }, { status: 400 });
+  }
+
+  const data = result.data;
 
   return NextResponse.json({ product: mapProduct(data as DbProduct) }, { status: 200 });
 }

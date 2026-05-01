@@ -28,6 +28,10 @@ async function isAdmin(supabase: ReturnType<typeof createSupabaseClient>, userId
   return Boolean(data?.user_id);
 }
 
+function isDemoAdmin(request: NextRequest) {
+  return request.cookies.get("shivora_admin_demo")?.value === "true";
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -41,12 +45,18 @@ export async function middleware(request: NextRequest) {
 
   const isAdminLogin = pathname.startsWith("/admin/login");
   const isAdminForbidden = pathname.startsWith("/admin/forbidden");
+  const isDemoLoginApi = pathname === "/api/admin/login";
 
   if (!isAdminPath && !isAdminApiPath) {
     return response;
   }
 
-  if (isAdminLogin || isAdminForbidden) {
+  if (isAdminLogin || isAdminForbidden || isDemoLoginApi) {
+    return response;
+  }
+
+  // Check demo admin first
+  if (isDemoAdmin(request)) {
     return response;
   }
 

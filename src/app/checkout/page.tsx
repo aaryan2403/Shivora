@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, Lock } from "lucide-react";
-
-type Product = { id: number; name: string; category: string; price: string; image: string };
-type CartItem = Product & { quantity: number };
+import { Lock } from "lucide-react";
+import { useShop } from "../../context/ShopContext";
 
 export default function CheckoutPage() {
   const [formData, setFormData] = useState({
@@ -22,7 +20,7 @@ export default function CheckoutPage() {
     cvc: ""
   });
 
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const { cart, clearCart } = useShop();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,23 +28,18 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load cart from localStorage
-    const savedCart = localStorage.getItem('shivora_cart');
-    if (savedCart) {
-      try { const parsed = JSON.parse(savedCart); setTimeout(() => setCart(parsed), 0); } catch (e) { console.error(e); }
-    }
-  }, []);
-
-  const cartTotal = cart.reduce((total, item) => {
-    const price = parseInt(item.price.replace('$', '').replace(',', ''));
-    return total + price * item.quantity;
-  }, 0);
-
-  useEffect(() => {
     // Check if all fields have some value
     const allFieldsFilled = Object.values(formData).every(val => val.trim().length > 0);
-    setTimeout(() => setIsFormValid(allFieldsFilled && termsAccepted), 0);
+    setIsFormValid(allFieldsFilled && termsAccepted);
   }, [formData, termsAccepted]);
+
+  const cartTotal = useMemo(() => {
+    return cart.reduce((total, item) => {
+      const price = Number(item.price.replace(/[$,]/g, ''));
+      if (isNaN(price)) return total;
+      return total + price * item.quantity;
+    }, 0);
+  }, [cart]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -61,12 +54,14 @@ export default function CheckoutPage() {
     setError(null);
 
     try {
+      // Strip sensitive card data before sending to server
+      const { cardNumber, expiry, cvc, ...safeCustomerInfo } = formData;
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cart,
-          customerInfo: formData,
+          customerInfo: safeCustomerInfo,
           total: cartTotal,
         })
       });
@@ -77,6 +72,7 @@ export default function CheckoutPage() {
         throw new Error(data.error || "Checkout failed");
       }
 
+      clearCart();
       setIsSuccess(true);
     } catch (err: any) {
       setError(err.message);
@@ -102,7 +98,6 @@ export default function CheckoutPage() {
           </p>
           <Link 
             href="/"
-            onClick={() => localStorage.removeItem('shivora_cart')}
             className="px-10 py-4 border border-ash/20 text-xs tracking-[0.2em] uppercase cursor-pointer hover:bg-primary hover:border-primary hover:text-creme transition-all duration-300 inline-block hover:scale-105"
           >
             Return to Store
@@ -114,16 +109,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
-      {/* Header */}
-      <header className="py-4 px-6 md:px-10 border-b border-primary/20 flex items-center justify-between sticky top-0 bg-primary/40 backdrop-blur-md shadow-sm z-50">
-        <Link href="/" className="flex items-center gap-2 text-ash cursor-pointer hover:text-creme transition-colors duration-300 text-xs uppercase tracking-[0.2em]">
-          <ChevronLeft size={16} /> Back to Store
-        </Link>
-        <div className="relative w-24 h-8"><Image src="/shivlogo.png" alt="Shivora Logo" fill className="object-contain" priority /></div>
-        <div className="w-20"></div> {/* Spacer for centering */}
-      </header>
-
-      <div className="max-w-6xl mx-auto px-6 mt-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="max-w-6xl mx-auto px-6 mt-4 grid grid-cols-1 lg:grid-cols-12 gap-12">
         
         {/* Left Column: Form */}
         <div className="lg:col-span-7">

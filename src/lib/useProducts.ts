@@ -23,7 +23,11 @@ export function useProducts() {
       }
 
       const data = (await res.json()) as ProductsResponse;
-      setProducts(Array.isArray(data.products) ? data.products : []);
+      if (data && Array.isArray(data.products)) {
+        setProducts(data.products);
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load products");
       setProducts([]);

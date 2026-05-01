@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, ShoppingBag, Heart } from "lucide-react";
@@ -19,11 +19,18 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  const images = product?.images || (product ? [product.image] : []);
+  const images = useMemo(() => product?.images || (product ? [product.image] : []), [product]);
+
+  // Reset image index when product changes
+  useEffect(() => {
+    setCurrentImageIndex(0);
+    setIsZoomed(false);
+    setIsHovering(false);
+  }, [product?.id]);
 
   // Auto-switch image every 5 seconds on hover
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (isHovering && images.length > 1 && !isZoomed) {
       interval = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -32,14 +39,23 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
     return () => clearInterval(interval);
   }, [isHovering, images.length, isZoomed]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     onClose();
     setTimeout(() => {
       setCurrentImageIndex(0);
       setIsZoomed(false);
       setIsHovering(false);
     }, 300);
-  };
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isOpen, handleClose]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isZoomed) return;
@@ -77,7 +93,9 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
             >
               {/* Close Button */}
               <button
+                type="button"
                 onClick={handleClose}
+                aria-label="Close product details"
                 className="absolute top-4 right-4 z-50 p-2 bg-obsidian/10 hover:bg-obsidian hover:text-creme rounded-full transition-colors duration-300"
               >
                 <X size={20} />
@@ -136,7 +154,9 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                   <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-4 z-10">
                     <div className="flex items-center gap-2">
                       <button 
+                        type="button"
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length); }}
+                        aria-label="Previous image"
                         className="p-1.5 bg-creme/80 hover:bg-creme text-obsidian rounded-full shadow-sm transition-colors backdrop-blur-sm"
                       >
                         <ChevronLeft size={16} />
@@ -144,8 +164,11 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                       <div className="flex gap-2">
                         {images.map((_, idx) => (
                           <button
+                            type="button"
                             key={idx}
                             onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
+                            aria-label={`View image ${idx + 1} of ${images.length}${idx === currentImageIndex ? ', current' : ''}`}
+                            aria-current={idx === currentImageIndex ? 'true' : undefined}
                             className={`w-2 h-2 rounded-full transition-all duration-300 ${
                               idx === currentImageIndex ? "bg-obsidian w-6" : "bg-obsidian/30 hover:bg-obsidian/60"
                             }`}
@@ -153,7 +176,9 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                         ))}
                       </div>
                       <button 
+                        type="button"
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex((prev) => (prev + 1) % images.length); }}
+                        aria-label="Next image"
                         className="p-1.5 bg-creme/80 hover:bg-creme text-obsidian rounded-full shadow-sm transition-colors backdrop-blur-sm"
                       >
                         <ChevronRight size={16} />
@@ -193,7 +218,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                   </div>
                   <div>
                     <span className="block text-ash text-xs uppercase tracking-widest mb-1">Material</span>
-                    <span className="font-semibold text-obsidian">{product.collection === 'Obsidian' ? 'Dark Rhodium / Obsidian' : product.collection === 'Ash' ? 'Brushed Gunmetal' : '18k Gold / Pearl'}</span>
+                    <span className="font-semibold text-obsidian">{product.collection === 'Necklaces' ? 'Dark Rhodium / Obsidian' : product.collection === 'Bracelets' ? 'Brushed Gunmetal' : '18k Gold / Pearl'}</span>
                   </div>
                   <div>
                     <span className="block text-ash text-xs uppercase tracking-widest mb-1">Availability</span>

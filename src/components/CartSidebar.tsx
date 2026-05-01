@@ -1,7 +1,8 @@
 "use client";
 
+import { useMemo, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useShop } from "../context/ShopContext";
@@ -9,10 +10,24 @@ import { useShop } from "../context/ShopContext";
 export default function CartSidebar() {
   const { cart, isCartOpen, setIsCartOpen, updateCartQuantity, removeFromCart } = useShop();
 
-  const cartTotal = cart.reduce((total, item) => {
-    const price = parseInt(item.price.replace('$', '').replace(',', ''));
-    return total + price * item.quantity;
-  }, 0);
+  const handleEscape = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") setIsCartOpen(false);
+  }, [setIsCartOpen]);
+
+  useEffect(() => {
+    if (isCartOpen) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [isCartOpen, handleEscape]);
+
+  const cartTotal = useMemo(() => {
+    return cart.reduce((total, item) => {
+      const price = Number(item.price.replace(/[$,]/g, ''));
+      if (isNaN(price)) return total;
+      return total + price * item.quantity;
+    }, 0);
+  }, [cart]);
 
   return (
     <AnimatePresence>
@@ -30,10 +45,11 @@ export default function CartSidebar() {
           >
             <div className="flex justify-between items-center mb-12">
               <h3 className="font-serif text-2xl tracking-widest">Your Cart</h3>
-              <button onClick={() => setIsCartOpen(false)} className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">
+              <button type="button" onClick={() => setIsCartOpen(false)} aria-label="Close cart" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">
                 <X size={24} />
               </button>
             </div>
+            <div role="dialog" aria-modal="true" aria-label="Shopping cart" />
 
             <div className="flex-1 overflow-y-auto flex flex-col gap-8 pr-4">
               {cart.length === 0 ? (
@@ -49,11 +65,11 @@ export default function CartSidebar() {
                       <p className="text-sm text-ash mb-3">{item.price}</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4 text-xs tracking-widest border border-ash/10 px-3 py-1 rounded-full">
-                          <button onClick={() => updateCartQuantity(item.id, -1)} className="text-ash cursor-pointer hover:text-creme w-4 h-4 flex items-center justify-center transition-colors duration-200">-</button>
+                          <button type="button" onClick={() => updateCartQuantity(item.id, -1)} aria-label="Decrease quantity" className="text-ash cursor-pointer hover:text-creme w-4 h-4 flex items-center justify-center transition-colors duration-200">-</button>
                           <span>{item.quantity}</span>
-                          <button onClick={() => updateCartQuantity(item.id, 1)} className="text-ash cursor-pointer hover:text-creme w-4 h-4 flex items-center justify-center transition-colors duration-200">+</button>
+                          <button type="button" onClick={() => updateCartQuantity(item.id, 1)} aria-label="Increase quantity" className="text-ash cursor-pointer hover:text-creme w-4 h-4 flex items-center justify-center transition-colors duration-200">+</button>
                         </div>
-                        <button onClick={() => removeFromCart(item.id)} className="text-[10px] uppercase tracking-widest text-ash cursor-pointer hover:text-primary transition-colors duration-200">Remove</button>
+                        <button type="button" onClick={() => removeFromCart(item.id)} aria-label="Remove item" className="text-[10px] uppercase tracking-widest text-ash cursor-pointer hover:text-primary transition-colors duration-200">Remove</button>
                       </div>
                     </div>
                   </div>

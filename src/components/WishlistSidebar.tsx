@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
@@ -7,6 +8,17 @@ import { useShop } from "../context/ShopContext";
 
 export default function WishlistSidebar() {
   const { wishlist, isWishlistOpen, setIsWishlistOpen, toggleWishlist, addToCart, setIsCartOpen } = useShop();
+
+  const handleEscape = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") setIsWishlistOpen(false);
+  }, [setIsWishlistOpen]);
+
+  useEffect(() => {
+    if (isWishlistOpen) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [isWishlistOpen, handleEscape]);
 
   return (
     <AnimatePresence>
@@ -24,7 +36,7 @@ export default function WishlistSidebar() {
           >
             <div className="flex justify-between items-center mb-12">
               <h3 className="font-serif text-2xl tracking-widest">Wishlist</h3>
-              <button onClick={() => setIsWishlistOpen(false)} className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">
+              <button type="button" onClick={() => setIsWishlistOpen(false)} aria-label="Close wishlist" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">
                 <X size={24} />
               </button>
             </div>
@@ -43,12 +55,13 @@ export default function WishlistSidebar() {
                       <p className="text-sm text-ash mb-3">{item.price}</p>
                       <div className="flex items-center justify-between">
                         <button 
+                          type="button"
                           onClick={() => { addToCart(item); toggleWishlist(item); setIsCartOpen(true); setIsWishlistOpen(false); }} 
                           className="text-[10px] uppercase tracking-widest text-creme cursor-pointer hover:text-primary transition-colors duration-200 border-b border-ash/20 pb-1"
                         >
                           Move to Cart
                         </button>
-                        <button onClick={() => toggleWishlist(item)} className="text-[10px] uppercase tracking-widest text-ash cursor-pointer hover:text-primary transition-colors duration-200">Remove</button>
+                        <button type="button" onClick={() => toggleWishlist(item)} aria-label="Remove from wishlist" className="text-[10px] uppercase tracking-widest text-ash cursor-pointer hover:text-primary transition-colors duration-200">Remove</button>
                       </div>
                     </div>
                   </div>

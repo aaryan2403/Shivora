@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ShoppingBag, Heart } from "lucide-react";
+import { ShoppingBag, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { useShop } from "../../context/ShopContext";
 import { useProducts } from "@/lib/useProducts";
@@ -14,16 +14,7 @@ export default function HighJewelryPage() {
 
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
-      {/* Header */}
-      <header className="py-4 px-6 md:px-10 border-b border-primary/20 flex items-center justify-between sticky top-0 bg-primary/40 backdrop-blur-md shadow-sm z-50">
-        <Link href="/" className="flex items-center gap-2 text-ash cursor-pointer hover:text-creme transition-colors duration-300 text-xs uppercase tracking-[0.2em]">
-          <ChevronLeft size={16} /> Back to Store
-        </Link>
-        <div className="relative w-24 h-8"><Image src="/shivlogo.png" alt="Shivora Logo" fill className="object-contain" priority /></div>
-        <div className="w-20"></div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 pt-12">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 pt-4">
         <div className="text-center mb-16">
           <span className="text-ash tracking-[0.3em] uppercase text-xs mb-4 block">Exclusive</span>
           <h1 className="font-serif text-4xl md:text-5xl mb-6">High Jewelry</h1>
@@ -55,8 +46,8 @@ export default function HighJewelryPage() {
                   alt={product.name}
                   fill
                   className={`object-cover transition-transform duration-1000 group-hover:scale-105 ${
-                    product.collection === 'Obsidian' ? 'grayscale contrast-125' : 
-                    product.collection === 'Ash' ? 'sepia-[.2] hue-rotate-180 brightness-75' : ''
+                    product.collection === 'Necklaces' ? 'grayscale contrast-125' : 
+                    product.collection === 'Bracelets' ? 'sepia-[.2] hue-rotate-180 brightness-75' : ''
                   }`}
                 />
                 

@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useShop } from "../context/ShopContext";
 import { useProducts } from "@/lib/useProducts";
+import { useHero } from "@/hooks/useHero";
 
 export default function Home() {
   const introRef = useRef<HTMLDivElement>(null);
@@ -14,6 +15,13 @@ export default function Home() {
   const { openProduct } = useShop();
 
   const { products, loading } = useProducts();
+  const { heroImageUrl, categoryImages } = useHero();
+
+  const categoryData = [
+    { name: "Necklaces", key: "necklaces" as const, defaultImg: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop", style: "grayscale contrast-125" },
+    { name: "Bracelets", key: "bracelets" as const, defaultImg: "https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?q=80&w=800&auto=format&fit=crop", style: "sepia-[.2] hue-rotate-180 brightness-75" },
+    { name: "Earrings", key: "earrings" as const, defaultImg: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop", style: "" }
+  ];
 
   // Track scroll progress of the intro container to trigger navbar
   const { scrollYProgress } = useScroll({
@@ -41,8 +49,18 @@ export default function Home() {
       {/* IMMERSIVE INTRO SECTION */}
       <motion.div 
         ref={introRef} 
-        className="relative h-screen bg-primary overflow-hidden flex flex-col items-center justify-center"
+        className={`relative h-screen overflow-hidden flex flex-col items-center justify-center ${!heroImageUrl ? "bg-primary" : ""}`}
       >
+        {heroImageUrl && (
+          <Image
+            src={heroImageUrl}
+            alt="Hero background"
+            fill
+            className="object-cover"
+            priority
+            sizes="100vw"
+          />
+        )}
           {/* 2. Store Intro */}
           <motion.div 
             style={{ opacity: storeIntroOpacity, scale: storeIntroScale }}
@@ -77,26 +95,22 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { name: "Obsidian", img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop", style: "grayscale contrast-125" },
-              { name: "Ash", img: "https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?q=80&w=800&auto=format&fit=crop", style: "sepia-[.2] hue-rotate-180 brightness-75" },
-              { name: "Pearl", img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop", style: "" }
-            ].map(cat => (
-              <motion.div 
+            {categoryData.map(cat => (
+              <motion.div
                 whileHover={{ scale: 0.98 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                key={cat.name} 
-                className="group cursor-pointer relative h-[60vh] overflow-hidden bg-ash/10 rounded-sm" 
+                key={cat.name}
+                className="group cursor-pointer relative h-[60vh] overflow-hidden bg-ash/10 rounded-sm"
                 onClick={() => {
                   document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
                   setActiveFilter(cat.name);
                 }}
               >
-                <Image 
-                  src={cat.img} 
-                  alt={`${cat.name} Collection`} 
-                  fill 
-                  className={`object-cover transition-transform duration-1000 group-hover:scale-105 ${cat.style}`} 
+                <Image
+                  src={categoryImages[cat.key] ?? cat.defaultImg}
+                  alt={`${cat.name} Collection`}
+                  fill
+                  className={`object-cover transition-transform duration-1000 group-hover:scale-105 ${cat.style}`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent flex flex-col justify-end p-8">
                   <h3 className="font-serif text-2xl md:text-3xl mb-2 group-hover:text-ash transition-colors">{cat.name}</h3>
@@ -124,7 +138,7 @@ export default function Home() {
             </div>
             
             <div className="flex gap-6 text-xs uppercase tracking-[0.2em] overflow-x-auto w-full md:w-auto pb-4 md:pb-0">
-              {["All", "Obsidian", "Ash", "Pearl"].map((filter) => (
+              {["All", "Necklaces", "Bracelets", "Earrings"].map((filter) => (
                 <button 
                   key={filter}
                   onClick={() => setActiveFilter(filter)}

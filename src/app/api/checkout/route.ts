@@ -52,12 +52,21 @@ export async function POST(request: NextRequest) {
     // Note: In a production app with high concurrency, you'd use a Postgres function (RPC)
     // to decrement stock atomically to prevent race conditions.
     for (const item of cart) {
-      if (item.stock !== undefined && item.stock !== null) {
-        const newStock = Math.max(0, item.stock - item.quantity);
-        await supabase
+      if (typeof item.id === "number") {
+        const { data: product } = await supabase
           .from("products")
-          .update({ stock: newStock })
-          .eq("id", item.id);
+          .select("stock")
+          .eq("id", item.id)
+          .single();
+
+        const currentStock = product?.stock;
+        if (typeof currentStock === "number") {
+          const newStock = Math.max(0, currentStock - item.quantity);
+          await supabase
+            .from("products")
+            .update({ stock: newStock })
+            .eq("id", item.id);
+        }
       }
     }
 

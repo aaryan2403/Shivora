@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useShop } from "../context/ShopContext";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SearchOverlay() {
@@ -12,10 +12,25 @@ export default function SearchOverlay() {
   const router = useRouter();
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
     if (isSearchOpen) {
-      setTimeout(() => inputRef.current?.focus(), 100);
+      timeout = setTimeout(() => inputRef.current?.focus(), 100);
     }
+    return () => clearTimeout(timeout);
   }, [isSearchOpen]);
+
+  const handleKeyDownDocument = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setIsSearchOpen(false);
+    }
+  }, [setIsSearchOpen]);
+
+  useEffect(() => {
+    if (isSearchOpen) {
+      document.addEventListener("keydown", handleKeyDownDocument);
+      return () => document.removeEventListener("keydown", handleKeyDownDocument);
+    }
+  }, [isSearchOpen, handleKeyDownDocument]);
 
   const handleSearch = (term?: string) => {
     const query = term || searchQuery;
@@ -47,11 +62,16 @@ export default function SearchOverlay() {
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Search"
             className="fixed top-0 left-0 w-full bg-obsidian border-b border-ash/10 z-[160] p-8 md:p-12 shadow-2xl"
           >
             <div className="max-w-4xl mx-auto relative">
               <button 
+                type="button"
                 onClick={() => setIsSearchOpen(false)}
+                aria-label="Close search"
                 className="absolute -top-6 -right-4 text-ash cursor-pointer hover:text-creme transition-colors duration-200 p-2"
               >
                 <X size={24} />
@@ -68,6 +88,7 @@ export default function SearchOverlay() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Search collections, products..."
+                  aria-label="Search collections and products"
                   className="w-full bg-transparent text-2xl md:text-4xl font-serif text-creme placeholder:text-ash/50 outline-none transition-colors duration-200"
                 />
               </div>
@@ -75,7 +96,7 @@ export default function SearchOverlay() {
               <div className="mt-8">
                 <p className="text-ash text-xs tracking-[0.2em] uppercase mb-4">Popular Searches</p>
                 <div className="flex gap-4 flex-wrap">
-                  {["Obsidian Ring", "Pearl Necklace", "Ash Earrings", "Gold"].map((term) => (
+                  {["Necklaces", "Bracelets", "Earrings", "Gold"].map((term) => (
                     <button 
                       key={term}
                       onClick={() => { setSearchQuery(term); handleSearch(term); }}

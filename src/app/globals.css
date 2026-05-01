@@ -52,3 +52,9 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-creme);
 }
+
+/* Firefox scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ash) var(--color-obsidian);
+}

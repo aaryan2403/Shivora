@@ -1,8 +1,7 @@
 "use client";
 
-import { ChevronLeft, Plus, Minus } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -38,16 +37,7 @@ export default function FaqPage() {
 
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
-      {/* Header */}
-      <header className="py-4 px-6 md:px-10 border-b border-primary/20 flex items-center justify-between sticky top-0 bg-primary/40 backdrop-blur-md shadow-sm z-50">
-        <Link href="/" className="flex items-center gap-2 text-ash cursor-pointer hover:text-creme transition-colors duration-300 text-xs uppercase tracking-[0.2em]">
-          <ChevronLeft size={16} /> Back to Store
-        </Link>
-        <div className="relative w-24 h-8"><Image src="/shivlogo.png" alt="Shivora Logo" fill className="object-contain" priority /></div>
-        <div className="w-20"></div>
-      </header>
-
-      <div className="max-w-3xl mx-auto px-6 md:px-12 pt-20">
+      <div className="max-w-3xl mx-auto px-6 md:px-12 pt-4">
         <div className="text-center mb-16">
           <span className="text-ash tracking-[0.3em] uppercase text-xs mb-4 block">Assistance</span>
           <h1 className="font-serif text-4xl md:text-5xl mb-6">Frequently Asked Questions</h1>

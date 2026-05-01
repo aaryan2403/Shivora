@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,6 +23,7 @@ export default function Navbar() {
 
   const [hasScrolledPastHero, setHasScrolledPastHero] = useState(false);
   const isVisible = !isHome || hasScrolledPastHero;
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!isHome) return;
@@ -31,8 +32,10 @@ export default function Navbar() {
     const handleScroll = () => {
       const heroHeight = window.innerHeight;
       // Show when scrolled 90% past hero
-      if (window.scrollY > heroHeight * 0.9) {
-        setTimeout(() => setHasScrolledPastHero(true), 0);
+      const shouldShow = window.scrollY > heroHeight * 0.9;
+      if (shouldShow) {
+        if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = setTimeout(() => setHasScrolledPastHero(true), 0);
       } else {
         setHasScrolledPastHero(false);
       }
@@ -42,12 +45,15 @@ export default function Navbar() {
     handleScroll();
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    };
   }, [isHome]);
 
   // --- NAVBAR CONTROLS ---
   // Adjust the 'py-' value to make the navbar thicker or thinner (e.g., py-2, py-4, py-6)
-  const NAVBAR_THICKNESS = "py-4";
+  const NAVBAR_THICKNESS = "py-1";
   // -----------------------
 
   return (
@@ -59,43 +65,48 @@ export default function Navbar() {
         pointerEvents: isVisible ? "auto" : "none"
       }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`fixed top-0 w-full ${NAVBAR_THICKNESS} px-6 md:px-10 flex justify-between items-center z-[100] text-creme transition-all duration-300 ${
-        isHome 
-          ? "bg-gradient-to-b from-primary/80 to-transparent" 
-          : "bg-primary/40 backdrop-blur-md border-b border-primary/20 shadow-sm"
-      }`}
+      className={`fixed top-0 w-full ${NAVBAR_THICKNESS} px-6 md:px-10 flex justify-between items-center z-[100] text-creme transition-all duration-300 bg-gradient-to-b from-primary/80 to-transparent`}
     >
       <Link href="/" className="relative w-72 h-25 ml-[-8vh]">
         <Image src="/shivlogo1.png" alt="Shivora Logo" fill className="object-contain" priority />
       </Link>
       
       <div className="hidden md:flex gap-10 text-xs tracking-[0.2em] uppercase font-bold items-center">
-        <Link href="/collections" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300">Collections</Link>
-        <Link href="/high-jewelry" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300">High Jewelry</Link>
+        {/* Collections Dropdown */}
+        <div className="relative group">
+          <Link href="/collections" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 block py-2">Collections</Link>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <div className="bg-obsidian/95 backdrop-blur-md border border-ash/10 shadow-xl rounded-sm py-2 min-w-[160px]">
+              <Link href="/collections?category=Necklaces" className="block px-5 py-2.5 text-[11px] tracking-[0.15em] text-ash hover:text-creme hover:bg-primary/10 transition-colors duration-200">Necklaces</Link>
+              <Link href="/collections?category=Bracelets" className="block px-5 py-2.5 text-[11px] tracking-[0.15em] text-ash hover:text-creme hover:bg-primary/10 transition-colors duration-200">Bracelets</Link>
+              <Link href="/collections?category=Rings" className="block px-5 py-2.5 text-[11px] tracking-[0.15em] text-ash hover:text-creme hover:bg-primary/10 transition-colors duration-200">Rings</Link>
+            </div>
+          </div>
+        </div>
         
         <div className="flex items-center gap-6 ml-4 border-l border-creme/20 pl-10">
-          <button onClick={() => setIsSearchOpen(true)} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300">
+          <button type="button" onClick={() => setIsSearchOpen(true)} aria-label="Open search" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300">
             <Search size={14} />
           </button>
           
           {user ? (
-             <div className="flex items-center gap-2 cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300">
+             <div className="flex items-center gap-2 cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300" aria-label={`Logged in as ${user.name}`}>
                <UserIcon size={14} />
                <span className="hidden lg:inline">{user.name}</span>
              </div>
           ) : (
-            <button onClick={() => setIsAuthOpen(true)} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-2">
+            <button type="button" onClick={() => setIsAuthOpen(true)} aria-label="Login" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-2">
               <LogIn size={14} />
               <span className="hidden lg:inline">Login</span>
             </button>
           )}
 
-          <button onClick={() => setIsWishlistOpen(true)} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-2">
+          <button type="button" onClick={() => setIsWishlistOpen(true)} aria-label={`Open wishlist (${wishlist.length} items)`} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-2">
             <Heart size={14} className={wishlist.length > 0 ? "fill-creme text-creme" : ""} />
             <span>({wishlist.length})</span>
           </button>
           
-          <button onClick={() => setIsCartOpen(true)} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-2">
+          <button type="button" onClick={() => setIsCartOpen(true)} aria-label={`Open cart (${cart.length} items)`} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-2">
             <ShoppingCart size={14} className={cart.length > 0 ? "fill-creme text-creme" : ""} />
             <span>({cart.length})</span>
           </button>
@@ -104,14 +115,14 @@ export default function Navbar() {
 
       {/* Mobile Menu Icons */}
       <div className="md:hidden flex gap-6 text-xs items-center">
-          <button onClick={() => setIsSearchOpen(true)} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300">
+          <button type="button" onClick={() => setIsSearchOpen(true)} aria-label="Open search" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300">
             <Search size={14} />
           </button>
-          <button onClick={() => setIsWishlistOpen(true)} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-1">
+          <button type="button" onClick={() => setIsWishlistOpen(true)} aria-label={`Open wishlist (${wishlist.length} items)`} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-1">
             <Heart size={14} className={wishlist.length > 0 ? "fill-creme text-creme" : ""} />
             <span>{wishlist.length}</span>
           </button>
-          <button onClick={() => setIsCartOpen(true)} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-1">
+          <button type="button" onClick={() => setIsCartOpen(true)} aria-label={`Open cart (${cart.length} items)`} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-1">
             <ShoppingCart size={14} className={cart.length > 0 ? "fill-creme text-creme" : ""} />
             <span>{cart.length}</span>
           </button>

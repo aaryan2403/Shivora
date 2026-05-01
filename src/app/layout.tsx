@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import { Cormorant, Montserrat } from "next/font/google";
 import "./globals.css";
 import { ShopProvider } from "../context/ShopContext";
+import { ThemeProvider } from "../context/ThemeContext";
 import Navbar from "../components/Navbar";
+import NavbarSpacer from "../components/NavbarSpacer";
 import SearchOverlay from "../components/SearchOverlay";
 import AuthModal from "../components/AuthModal";
 import CartSidebar from "../components/CartSidebar";
 import WishlistSidebar from "../components/WishlistSidebar";
 import GlobalProductModal from "../components/GlobalProductModal";
+import Footer from "../components/Footer";
+import LoginPrompt from "../components/LoginPrompt";
 
 const cormorant = Cormorant({
   variable: "--font-cormorant",
@@ -26,8 +30,6 @@ export const metadata: Metadata = {
   description: "Discover our exquisite collection of fine jewelry. Elegant pieces crafted with obsidian, ash, and pearl aesthetics.",
 };
 
-import Footer from "../components/Footer";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,16 +40,19 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${cormorant.variable} antialiased bg-creme text-obsidian min-h-screen font-sans selection:bg-primary/20`}
       >
-        <ShopProvider>
-          <Navbar />
-          <SearchOverlay />
-          <AuthModal />
-          <CartSidebar />
-          <GlobalProductModal />
-          <WishlistSidebar />
-          {children}
-          <Footer />
-        </ShopProvider>
+        <ThemeProvider>
+          <ShopProvider>
+            <Navbar />
+            <NavbarSpacer />
+            <SearchOverlay />
+            <AuthModal />
+            <CartSidebar />
+            <GlobalProductModal />
+            <WishlistSidebar />
+            {children}
+            <Footer />
+          </ShopProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

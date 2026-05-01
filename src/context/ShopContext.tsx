@@ -1,20 +1,23 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef, ReactNode } from 'react';
 
 // Types
-export type Product = { 
-  id: number; 
-  name: string; 
-  category: string; 
+export type Product = {
+  id: number;
+  name: string;
+  category: string;
   collection?: string;
-  price: string; 
+  price: string;
   image: string;
   images?: string[];
   description?: string;
   isHighJewelry?: boolean;
   stock?: number;
+  color?: string;
 };
+
+export const ADMIN_EMAIL = "shivoraadmin@gmail.com";
 export type CartItem = Product & { quantity: number };
 
 type User = {
@@ -77,24 +80,48 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       const savedWishlist = localStorage.getItem('shivora_wishlist');
       const savedUser = localStorage.getItem('shivora_user');
       
-      if (savedCart) { try { const parsed = JSON.parse(savedCart); setTimeout(() => setCart(parsed), 0); } catch (e) { console.error(e); } }
-      if (savedWishlist) { try { const parsed = JSON.parse(savedWishlist); setTimeout(() => setWishlist(parsed), 0); } catch (e) { console.error(e); } }
-      if (savedUser) { try { const parsed = JSON.parse(savedUser); setTimeout(() => setUser(parsed), 0); } catch (e) { console.error(e); } }
+      if (savedCart) { try { const parsed = JSON.parse(savedCart); setCart(parsed); } catch (e) { console.error(e); } }
+      if (savedWishlist) { try { const parsed = JSON.parse(savedWishlist); setWishlist(parsed); } catch (e) { console.error(e); } }
+      if (savedUser) {
+        try {
+          const parsed = JSON.parse(savedUser);
+          setUser(parsed);
+          if (parsed.email === ADMIN_EMAIL) {
+            fetch("/api/admin/verify-email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: parsed.email }),
+            }).catch(() => {});
+          }
+        } catch (e) { console.error(e); }
+      }
     }
   }, []);
 
   // Save to localStorage
   useEffect(() => {
-    localStorage.setItem('shivora_cart', JSON.stringify(cart));
+    try {
+      localStorage.setItem('shivora_cart', JSON.stringify(cart));
+    } catch (e) {
+      console.error('Failed to save cart to localStorage', e);
+    }
   }, [cart]);
 
   useEffect(() => {
-    localStorage.setItem('shivora_wishlist', JSON.stringify(wishlist));
+    try {
+      localStorage.setItem('shivora_wishlist', JSON.stringify(wishlist));
+    } catch (e) {
+      console.error('Failed to save wishlist to localStorage', e);
+    }
   }, [wishlist]);
 
   useEffect(() => {
-    if (user) localStorage.setItem('shivora_user', JSON.stringify(user));
-    else localStorage.removeItem('shivora_user');
+    try {
+      if (user) localStorage.setItem('shivora_user', JSON.stringify(user));
+      else localStorage.removeItem('shivora_user');
+    } catch (e) {
+      console.error('Failed to save user to localStorage', e);
+    }
   }, [user]);
 
   const addToCart = (product: Product) => {
@@ -134,13 +161,29 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const login = (email: string) => {
+  const login = async (email: string) => {
     setUser({ name: email.split('@')[0], email });
     setIsAuthOpen(false);
+    if (email === ADMIN_EMAIL) {
+      try {
+        await fetch("/api/admin/verify-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+      } catch {
+        // silently fail — admin cookie not critical for client-side
+      }
+    }
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
+    try {
+      await fetch("/api/admin/login", { method: "DELETE" });
+    } catch {
+      // ignore
+    }
   };
 
   const openProduct = (product: Product) => {
@@ -148,20 +191,25 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     setIsProductModalOpen(true);
   };
 
+  const closeProductTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const closeProduct = () => {
     setIsProductModalOpen(false);
-    setTimeout(() => setSelectedProduct(null), 300); // wait for animation
+    if (closeProductTimeoutRef.current) clearTimeout(closeProductTimeoutRef.current);
+    closeProductTimeoutRef.current = setTimeout(() => setSelectedProduct(null), 300); // wait for animation
   };
 
+  const value = useMemo(() => ({
+    cart, wishlist, user,
+    isCartOpen, isWishlistOpen, isSearchOpen, isAuthOpen, searchQuery,
+    selectedProduct, isProductModalOpen,
+    addToCart, removeFromCart, updateCartQuantity, clearCart, toggleWishlist,
+    login, logout, setSearchQuery, openProduct, closeProduct,
+    setIsCartOpen, setIsWishlistOpen, setIsSearchOpen, setIsAuthOpen
+  }), [cart, wishlist, user, isCartOpen, isWishlistOpen, isSearchOpen, isAuthOpen, searchQuery, selectedProduct, isProductModalOpen]);
+
   return (
-    <ShopContext.Provider value={{
-      cart, wishlist, user,
-      isCartOpen, isWishlistOpen, isSearchOpen, isAuthOpen, searchQuery,
-      selectedProduct, isProductModalOpen,
-      addToCart, removeFromCart, updateCartQuantity, clearCart, toggleWishlist,
-      login, logout, setSearchQuery, openProduct, closeProduct,
-      setIsCartOpen, setIsWishlistOpen, setIsSearchOpen, setIsAuthOpen
-    }}>
+    <ShopContext.Provider value={value}>
       {children}
     </ShopContext.Provider>
   );

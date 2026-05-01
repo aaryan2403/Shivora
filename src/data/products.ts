@@ -3,7 +3,7 @@ export const products = [
     id: 1, 
     name: "Obsidian Core Ring", 
     category: "Rings", 
-    collection: "Obsidian", 
+    collection: "Necklaces", 
     price: "$2,400", 
     image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -18,7 +18,7 @@ export const products = [
     id: 2, 
     name: "Fallen Ash Necklace", 
     category: "Necklaces", 
-    collection: "Ash", 
+    collection: "Bracelets", 
     price: "$3,100", 
     image: "https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -32,7 +32,7 @@ export const products = [
     id: 3, 
     name: "Luminous Pearl Drop", 
     category: "Earrings", 
-    collection: "Pearl", 
+    collection: "Earrings", 
     price: "$1,850", 
     image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -46,7 +46,7 @@ export const products = [
     id: 4, 
     name: "Midnight Band", 
     category: "Rings", 
-    collection: "Obsidian", 
+    collection: "Necklaces", 
     price: "$1,200", 
     image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -60,7 +60,7 @@ export const products = [
     id: 5, 
     name: "Smokey Ash Earrings", 
     category: "Earrings", 
-    collection: "Ash", 
+    collection: "Bracelets", 
     price: "$2,750", 
     image: "https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -74,7 +74,7 @@ export const products = [
     id: 6, 
     name: "Oceanic Pearl Ring", 
     category: "Rings", 
-    collection: "Pearl", 
+    collection: "Earrings", 
     price: "$4,200", 
     image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -88,7 +88,7 @@ export const products = [
     id: 7, 
     name: "Obsidian Teardrop", 
     category: "Necklaces", 
-    collection: "Obsidian", 
+    collection: "Necklaces", 
     price: "$3,800", 
     image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -102,7 +102,7 @@ export const products = [
     id: 8, 
     name: "Ash Chain Bracelet", 
     category: "Bracelets", 
-    collection: "Ash", 
+    collection: "Bracelets", 
     price: "$1,500", 
     image: "https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -116,7 +116,7 @@ export const products = [
     id: 9, 
     name: "Baroque Pearl Set", 
     category: "Necklaces", 
-    collection: "Pearl", 
+    collection: "Earrings", 
     price: "$5,600", 
     image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -131,7 +131,7 @@ export const products = [
     id: 10, 
     name: "Eternal Void Collar", 
     category: "Necklaces", 
-    collection: "Obsidian", 
+    collection: "Necklaces", 
     price: "$12,500", 
     image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -145,7 +145,7 @@ export const products = [
     id: 11, 
     name: "Phoenix Ash Diadem", 
     category: "Headwear", 
-    collection: "Ash", 
+    collection: "Bracelets", 
     price: "$18,000", 
     image: "https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?q=80&w=800&auto=format&fit=crop",
     images: [
@@ -159,7 +159,7 @@ export const products = [
     id: 12, 
     name: "Abyssal Pearl Choker", 
     category: "Necklaces", 
-    collection: "Pearl", 
+    collection: "Earrings", 
     price: "$15,200", 
     image: "https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=800&auto=format&fit=crop",
     images: [
