@@ -21,13 +21,7 @@ function getRequiredEnv(...names: string[]) {
 }
 
 export function getSupabaseUrl() {
-  const value = process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-  if (value) {
-    return value;
-  }
-
-  throw new Error("Missing Supabase environment variable. Set one of: NEXT_PUBLIC_SUPABASE_URL");
+  return getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_URL");
 }
 
 export function getSupabaseBrowserKey() {
