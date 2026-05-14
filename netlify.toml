@@ -15,6 +15,13 @@
 [context.branch-deploy]
   command = "npm run build"
 
+# Force all traffic to HTTPS
+[[redirects]]
+  from = "http://*"
+  to = "https://:splat"
+  status = 301
+  force = true
+
 # Prevent stale HTML caching on all domains
 [[headers]]
   for = "/*"
@@ -22,6 +29,8 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
 # Next.js static assets can be cached long-term
 [[headers]]
