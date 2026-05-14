@@ -42,6 +42,14 @@ import {
 } from "lucide-react";
 import ThemePanel from "@/components/admin/ThemePanel";
 
+function getSupabaseClient() {
+  try {
+    return createClient();
+  } catch {
+    return null;
+  }
+}
+
 /* ─── Toast Component ─── */
 function ToastContainer({ toasts, removeToast }: { toasts: ReturnType<typeof useToast>["toasts"]; removeToast: (id: string) => void }) {
   return (
@@ -162,11 +170,6 @@ function AdminAccessDenied() {
 export default function AdminPage() {
   const router = useRouter();
   const { user, logout } = useShop();
-  const supabase = useMemo(() => createClient(), []);
-
-  if (user?.email !== ADMIN_EMAIL) {
-    return <AdminAccessDenied />;
-  }
   const { products, loading, error, refetch } = useProducts();
   const { toasts, addToast, removeToast, updateToast } = useToast();
 
@@ -225,6 +228,10 @@ export default function AdminPage() {
     fetchSettings();
   }, []);
 
+  if (user?.email !== ADMIN_EMAIL) {
+    return <AdminAccessDenied />;
+  }
+
   const validateImageRatio = (file: File): Promise<{ valid: boolean; ratio: number }> => {
     return new Promise((resolve) => {
       const img = new window.Image();
@@ -239,6 +246,8 @@ export default function AdminPage() {
   };
 
   const uploadToStorage = async (file: File, folder: string): Promise<string | null> => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return null;
     const filename = `${folder}-${Date.now()}-${file.name}`;
     const path = `${folder}/${filename}`;
     const { error: uploadError } = await supabase.storage.from("hero-images").upload(path, file, { upsert: true });
@@ -395,6 +404,11 @@ export default function AdminPage() {
     const toastId = addToast("Uploading images...", "loading", 0);
 
     const uploadedUrls: string[] = [];
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      updateToast(toastId, "Supabase is not configured — cannot upload images", "error");
+      return;
+    }
     for (const file of Array.from(files)) {
       const filename = `${Date.now()}-${file.name}`;
       const path = `products/${filename}`;
@@ -534,7 +548,10 @@ export default function AdminPage() {
 
   const handleLogout = async () => {
     await fetch("/api/admin/login", { method: "DELETE" });
-    await supabase.auth.signOut();
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      try { await supabase.auth.signOut(); } catch {}
+    }
     logout();
     router.replace("/");
   };

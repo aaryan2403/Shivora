@@ -39,6 +39,7 @@ function LoginForm() {
         throw new Error(data.error || "Login failed");
       }
 
+      localStorage.setItem("shivora_user", JSON.stringify({ name: "Admin", email: "shivoraadmin@gmail.com" }));
       router.replace(nextPath);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");

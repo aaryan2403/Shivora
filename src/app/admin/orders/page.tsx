@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ShieldAlert, Clock } from "lucide-react";
@@ -77,26 +77,26 @@ export default function AdminOrdersPage() {
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [updateError, setUpdateError] = useState<string | null>(null);
 
-  if (user?.email !== ADMIN_EMAIL) {
-    return <AdminAccessDenied />;
-  }
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/orders");
       if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
       setOrders(data.orders || []);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to fetch orders");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [fetchOrders]);
+
+  if (user?.email !== ADMIN_EMAIL) {
+    return <AdminAccessDenied />;
+  }
 
   const updateOrderStatus = async (orderId: number, newStatus: Order["status"]) => {
     setUpdatingId(orderId);
