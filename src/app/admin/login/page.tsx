@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Lock, User, ArrowRight, Sparkles } from "lucide-react";
+import { Shield, Lock, User, ArrowRight } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -14,12 +14,7 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showCreds, setShowCreds] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShowCreds(true), 800);
-    return () => clearTimeout(timer);
-  }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,31 +148,7 @@ function LoginForm() {
             </motion.button>
           </form>
 
-          <AnimatePresence>
-            {showCreds && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-                className="mt-8 pt-6 border-t border-ash/10"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles size={12} className="text-primary" />
-                  <span className="text-[10px] uppercase tracking-[0.25em] text-primary">Demo Credentials</span>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-primary/5 border border-primary/10 px-3 py-2">
-                    <div className="text-[9px] uppercase tracking-wider text-ash mb-1">Username</div>
-                    <div className="text-sm text-creme font-mono">admin</div>
-                  </div>
-                  <div className="bg-primary/5 border border-primary/10 px-3 py-2">
-                    <div className="text-[9px] uppercase tracking-wider text-ash mb-1">Password</div>
-                    <div className="text-sm text-creme font-mono">shivora2024</div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+
         </div>
       </div>
     </motion.div>

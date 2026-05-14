@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-const DEMO_ADMIN = {
-  username: "admin",
-  password: "shivora2024",
+const ADMIN_CREDS = {
+  username: "ShivoraAdmin2025",
+  password: "Shivora2025",
 };
 
 export async function POST(request: Request) {
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { username, password } = body;
 
-    if (username === DEMO_ADMIN.username && password === DEMO_ADMIN.password) {
+    if (username === ADMIN_CREDS.username && password === ADMIN_CREDS.password) {
       const response = NextResponse.json({ success: true });
       
       // Set a demo admin cookie that lasts 24 hours
