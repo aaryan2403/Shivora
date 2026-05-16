@@ -22,6 +22,13 @@
   status = 301
   force = true
 
+# Redirect www to non-www (canonical domain)
+[[redirects]]
+  from = "https://www.myshivora.com/*"
+  to = "https://myshivora.com/:splat"
+  status = 301
+  force = true
+
 # Prevent stale HTML caching on all domains
 [[headers]]
   for = "/*"
@@ -38,9 +45,7 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Redirect www to non-www (or vice versa) — pick one and uncomment:
-# [[redirects]]
-#   from = "https://www.yourdomain.com/*"
-#   to = "https://yourdomain.com/:splat"
-#   status = 301
-#   force = true
+# SSL Note: myshivora.com must be added as a custom domain in Netlify
+# dashboard and have an active SSL certificate provisioned.
+# If you see NET::ERR_CERT_COMMON_NAME_INVALID, the domain is not
+# registered in Netlify → Site settings → Domain management.
