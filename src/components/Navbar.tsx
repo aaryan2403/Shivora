@@ -4,26 +4,40 @@ import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, User as UserIcon, Heart, ShoppingCart, LogIn } from "lucide-react";
-import { motion } from "framer-motion";
+import { Search, User as UserIcon, Heart, ShoppingCart, LogIn, LogOut } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useShop } from "../context/ShopContext";
 
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const { 
-    cart, 
-    wishlist, 
-    user, 
-    setIsCartOpen, 
-    setIsWishlistOpen, 
-    setIsSearchOpen, 
-    setIsAuthOpen 
+  const {
+    cart,
+    wishlist,
+    user,
+    logout,
+    setIsCartOpen,
+    setIsWishlistOpen,
+    setIsSearchOpen,
+    setIsAuthOpen
   } = useShop();
 
   const [hasScrolledPastHero, setHasScrolledPastHero] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const isVisible = !isHome || hasScrolledPastHero;
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Close profile dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (!isHome) return;
@@ -90,10 +104,48 @@ export default function Navbar() {
           </button>
           
           {user ? (
-             <div className="flex items-center gap-2 cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300" aria-label={`Logged in as ${user.name}`}>
-               <UserIcon size={14} />
-               <span className="hidden lg:inline">{user.name}</span>
-             </div>
+            <div className="relative" ref={profileRef}>
+              <button
+                type="button"
+                onClick={() => setIsProfileOpen(prev => !prev)}
+                aria-label={`Profile: ${user.name}`}
+                className="flex items-center gap-2 cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300"
+              >
+                <UserIcon size={14} />
+                <span className="hidden lg:inline">{user.name.split(' ')[0]}</span>
+              </button>
+              <AnimatePresence>
+                {isProfileOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-full right-0 mt-3 bg-obsidian/95 backdrop-blur-md border border-ash/10 shadow-xl rounded-sm py-2 min-w-[160px] z-[200]"
+                  >
+                    <div className="px-5 py-2 border-b border-ash/10 mb-1">
+                      <p className="text-[10px] tracking-[0.15em] uppercase text-ash/60">Signed in as</p>
+                      <p className="text-xs text-creme truncate max-w-[140px] mt-0.5">{user.email}</p>
+                    </div>
+                    <Link
+                      href="/account"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-5 py-2.5 text-[11px] tracking-[0.15em] text-ash hover:text-creme hover:bg-primary/10 transition-colors duration-200"
+                    >
+                      My Account
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => { logout(); setIsProfileOpen(false); }}
+                      className="w-full text-left px-5 py-2.5 text-[11px] tracking-[0.15em] text-ash hover:text-creme hover:bg-primary/10 transition-colors duration-200 flex items-center gap-2"
+                    >
+                      <LogOut size={11} />
+                      Sign Out
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           ) : (
             <button type="button" onClick={() => setIsAuthOpen(true)} aria-label="Login" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-2">
               <LogIn size={14} />

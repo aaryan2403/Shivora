@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useRef, ReactNode } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
 // Types
 export type Product = {
@@ -73,29 +74,46 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
-  // Load from localStorage
+  // Load cart/wishlist from localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedCart = localStorage.getItem('shivora_cart');
       const savedWishlist = localStorage.getItem('shivora_wishlist');
-      const savedUser = localStorage.getItem('shivora_user');
-      
-      if (savedCart) { try { const parsed = JSON.parse(savedCart); setCart(parsed); } catch (e) { console.error(e); } }
-      if (savedWishlist) { try { const parsed = JSON.parse(savedWishlist); setWishlist(parsed); } catch (e) { console.error(e); } }
-      if (savedUser) {
-        try {
-          const parsed = JSON.parse(savedUser);
-          setUser(parsed);
-          if (parsed.email === ADMIN_EMAIL) {
-            fetch("/api/admin/verify-email", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email: parsed.email }),
-            }).catch(() => {});
-          }
-        } catch (e) { console.error(e); }
-      }
+      if (savedCart) { try { setCart(JSON.parse(savedCart)); } catch (e) { console.error(e); } }
+      if (savedWishlist) { try { setWishlist(JSON.parse(savedWishlist)); } catch (e) { console.error(e); } }
     }
+  }, []);
+
+  // Sync user state with Supabase auth
+  useEffect(() => {
+    const supabase = createClient();
+
+    supabase.auth.getUser().then(({ data: { user: sbUser } }) => {
+      if (sbUser) {
+        const name = sbUser.user_metadata?.full_name || sbUser.user_metadata?.name || sbUser.email?.split('@')[0] || 'User';
+        const email = sbUser.email ?? '';
+        setUser({ name, email });
+        if (email === ADMIN_EMAIL) {
+          fetch("/api/admin/verify-email", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) }).catch(() => {});
+        }
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        const sbUser = session.user;
+        const name = sbUser.user_metadata?.full_name || sbUser.user_metadata?.name || sbUser.email?.split('@')[0] || 'User';
+        const email = sbUser.email ?? '';
+        setUser({ name, email });
+        if (email === ADMIN_EMAIL) {
+          fetch("/api/admin/verify-email", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) }).catch(() => {});
+        }
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Save to localStorage
@@ -115,14 +133,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     }
   }, [wishlist]);
 
-  useEffect(() => {
-    try {
-      if (user) localStorage.setItem('shivora_user', JSON.stringify(user));
-      else localStorage.removeItem('shivora_user');
-    } catch (e) {
-      console.error('Failed to save user to localStorage', e);
-    }
-  }, [user]);
+  // user state is managed via Supabase auth — no localStorage needed for user
 
   const addToCart = (product: Product) => {
     setCart(prev => {
@@ -161,23 +172,15 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  // login/logout are handled via Supabase auth; these are kept for compatibility
   const login = async (email: string) => {
-    setUser({ name: email.split('@')[0], email });
+    // user state is set via onAuthStateChange after Supabase auth succeeds
     setIsAuthOpen(false);
-    if (email === ADMIN_EMAIL) {
-      try {
-        await fetch("/api/admin/verify-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        });
-      } catch {
-        // silently fail — admin cookie not critical for client-side
-      }
-    }
   };
 
   const logout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
     setUser(null);
     try {
       await fetch("/api/admin/login", { method: "DELETE" });

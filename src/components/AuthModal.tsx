@@ -1,30 +1,56 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Mail, Lock, ArrowRight } from "lucide-react";
+import { X, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
 import { useShop } from "../context/ShopContext";
 import { useState, useEffect, useCallback } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AuthModal() {
-  const { isAuthOpen, setIsAuthOpen, login } = useShop();
+  const { isAuthOpen, setIsAuthOpen } = useShop();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login
-    if (email) {
-      login(email);
-      setIsAuthOpen(false);
+    setError(null);
+    setSuccessMessage(null);
+    setLoading(true);
+
+    const supabase = createClient();
+
+    if (isLogin) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setError(error.message);
+      } else {
+        setIsAuthOpen(false);
+      }
+    } else {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        setError(error.message);
+      } else {
+        setSuccessMessage("Check your email to confirm your account.");
+      }
     }
+
+    setLoading(false);
   };
 
-  const handleGoogleSignIn = () => {
-    // Simulate Google login
-    const googleEmail = `user${Math.floor(Math.random() * 10000)}@gmail.com`;
-    login(googleEmail);
-    setIsAuthOpen(false);
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    const supabase = createClient();
+    const redirectTo = `${window.location.origin}/auth/callback`;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo },
+    });
+    if (error) setError(error.message);
   };
 
   const handleEscape = useCallback((e: KeyboardEvent) => {
@@ -33,6 +59,8 @@ export default function AuthModal() {
 
   useEffect(() => {
     if (isAuthOpen) {
+      setError(null);
+      setSuccessMessage(null);
       document.addEventListener("keydown", handleEscape);
       return () => document.removeEventListener("keydown", handleEscape);
     }
@@ -59,7 +87,7 @@ export default function AuthModal() {
             aria-labelledby="auth-title"
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-obsidian border border-ash/10 z-[160] p-8 md:p-12 shadow-2xl rounded-sm"
           >
-            <button 
+            <button
               type="button"
               onClick={() => setIsAuthOpen(false)}
               aria-label="Close authentication"
@@ -74,6 +102,19 @@ export default function AuthModal() {
                 {isLogin ? "Access your wishlist and order history." : "Create an account to unlock exclusive benefits."}
               </p>
             </div>
+
+            {error && (
+              <div className="mb-4 flex items-start gap-2 text-red-400 text-xs bg-red-400/10 border border-red-400/20 px-4 py-3 rounded-sm">
+                <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="mb-4 text-emerald-400 text-xs bg-emerald-400/10 border border-emerald-400/20 px-4 py-3 rounded-sm">
+                {successMessage}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <div className="space-y-4">
@@ -101,16 +142,18 @@ export default function AuthModal() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full bg-ash/5 border border-ash/10 py-3 pl-12 pr-4 text-sm text-creme placeholder:text-ash/50 outline-none focus:border-creme/50 transition-colors"
                     required
+                    minLength={6}
                   />
                 </div>
               </div>
 
-              <button 
+              <button
                 type="submit"
-                className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-all duration-300 flex justify-center items-center gap-2 group"
+                disabled={loading}
+                className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-all duration-300 flex justify-center items-center gap-2 group disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {isLogin ? "Sign In" : "Create Account"}
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
+                {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
+                {!loading && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />}
               </button>
             </form>
 
@@ -138,8 +181,8 @@ export default function AuthModal() {
             </button>
 
             <div className="mt-8 text-center">
-              <button 
-                onClick={() => setIsLogin(!isLogin)}
+              <button
+                onClick={() => { setIsLogin(!isLogin); setError(null); setSuccessMessage(null); }}
                 className="text-ash text-xs tracking-wider cursor-pointer border-b border-transparent hover:border-ash hover:text-creme transition-all duration-200 pb-1"
               >
                 {isLogin ? "Don't have an account? Register" : "Already have an account? Sign In"}
