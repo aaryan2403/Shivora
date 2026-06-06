@@ -172,6 +172,7 @@ export default function AdminPage() {
   const { user, logout } = useShop();
   const { products, loading, error, refetch } = useProducts();
   const { toasts, addToast, removeToast, updateToast } = useToast();
+  const [isAdminVerified, setIsAdminVerified] = useState<boolean | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -228,7 +229,27 @@ export default function AdminPage() {
     fetchSettings();
   }, []);
 
-  if (user?.email !== ADMIN_EMAIL) {
+  useEffect(() => {
+    async function checkAdmin() {
+      const supabase = getSupabaseClient();
+      if (!supabase) { setIsAdminVerified(false); return; }
+      const { data: { user: sbUser } } = await supabase.auth.getUser();
+      if (!sbUser) { setIsAdminVerified(false); return; }
+      const { data } = await supabase.from("admins").select("user_id").eq("user_id", sbUser.id).maybeSingle();
+      setIsAdminVerified(!!data);
+    }
+    checkAdmin();
+  }, []);
+
+  if (isAdminVerified === null) {
+    return (
+      <main className="min-h-screen bg-obsidian text-creme flex items-center justify-center">
+        <Loader2 size={24} className="animate-spin text-ash" />
+      </main>
+    );
+  }
+
+  if (!isAdminVerified) {
     return <AdminAccessDenied />;
   }
 
