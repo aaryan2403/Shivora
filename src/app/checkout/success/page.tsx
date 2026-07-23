@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { stripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import ClearCartOnSuccess from "./ClearCartOnSuccess";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
 
   return (
     <main className="min-h-screen bg-obsidian text-creme flex flex-col items-center justify-center p-6 selection:bg-ash selection:text-obsidian">
+      <ClearCartOnSuccess paid={paid} />
       <div className="text-center max-w-md">
         <div className="w-20 h-20 bg-ash/10 rounded-full flex items-center justify-center mx-auto mb-8">
           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-creme">

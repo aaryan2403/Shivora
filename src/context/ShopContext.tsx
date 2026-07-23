@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useMemo, useRef, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef, ReactNode } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
 // Types
@@ -159,9 +159,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const clearCart = () => {
+  // Memoized so consumers can safely use it as an effect dependency.
+  const clearCart = useCallback(() => {
     setCart([]);
-  };
+  }, []);
 
   const toggleWishlist = (product: Product) => {
     setWishlist(prev => {
