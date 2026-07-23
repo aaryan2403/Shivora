@@ -1,46 +1,39 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
-
-const ADMIN_CREDS = {
-  username: "ShivoraAdmin2025",
-  password: "Shivora2025",
-};
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { username, password } = body;
-
-    if (username === ADMIN_CREDS.username && password === ADMIN_CREDS.password) {
-      const response = NextResponse.json({ success: true });
-      
-      // Set a demo admin cookie that lasts 24 hours
-      response.cookies.set("shivora_admin_demo", "true", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24, // 24 hours
-        path: "/",
-      });
-
-      return response;
+    const { email, password } = body ?? {};
+    if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
+      return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
     }
 
-    return NextResponse.json(
-      { error: "Invalid username or password" },
-      { status: 401 }
-    );
+    const supabase = await createClient();
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError || !signInData.user) {
+      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+    }
+
+    const { data: adminRow, error: adminError } = await supabase
+      .from("admins")
+      .select("user_id")
+      .eq("user_id", signInData.user.id)
+      .maybeSingle();
+    if (adminError || !adminRow?.user_id) {
+      await supabase.auth.signOut();
+      return NextResponse.json({ error: "This account does not have admin access" }, { status: 403 });
+    }
+    return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json(
-      { error: "Invalid request" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }
 
 export async function DELETE() {
-  const response = NextResponse.json({ success: true });
-  response.cookies.delete("shivora_admin_demo");
-  return response;
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  return NextResponse.json({ success: true });
 }

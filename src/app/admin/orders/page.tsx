@@ -26,9 +26,31 @@ type Order = {
   zip_code: string;
   total_amount: number;
   status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+  payment_status: "unpaid" | "paid" | "expired" | "refunded" | null;
   created_at: string;
   order_items: OrderItem[];
 };
+
+function PaymentBadge({ status }: { status: Order["payment_status"] }) {
+  const s = status ?? "unpaid";
+  const styles: Record<string, string> = {
+    paid: "text-green-400 border-green-400/40 bg-green-400/10",
+    unpaid: "text-yellow-400 border-yellow-400/40 bg-yellow-400/10",
+    expired: "text-red-400 border-red-400/40 bg-red-400/10",
+    refunded: "text-blue-400 border-blue-400/40 bg-blue-400/10",
+  };
+  const label: Record<string, string> = {
+    paid: "Paid",
+    unpaid: "Awaiting Payment",
+    expired: "Payment Failed",
+    refunded: "Refunded",
+  };
+  return (
+    <span className={`text-[10px] uppercase tracking-[0.2em] px-3 py-1 border rounded-full ${styles[s] ?? styles.unpaid}`}>
+      {label[s] ?? s}
+    </span>
+  );
+}
 
 function AdminAccessDenied() {
   const router = useRouter();
@@ -137,7 +159,10 @@ export default function AdminOrdersPage() {
               <div key={order.id} className="border border-ash/20 bg-primary/10 rounded-sm p-6 md:p-8">
                 <div className="flex flex-col md:flex-row justify-between gap-6 mb-6 pb-6 border-b border-ash/10">
                   <div>
-                    <h2 className="font-serif text-2xl mb-1">Order #{order.id}</h2>
+                    <div className="flex items-center gap-3 mb-1">
+                      <h2 className="font-serif text-2xl">Order #{order.id}</h2>
+                      <PaymentBadge status={order.payment_status} />
+                    </div>
                     <p className="text-xs text-ash tracking-wider uppercase mb-4">
                       {new Date(order.created_at).toLocaleString()}
                     </p>

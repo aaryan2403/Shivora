@@ -12,7 +12,7 @@ function createSupabaseClient(request: NextRequest, response: NextResponse) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value));
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
         cookiesToSet.forEach(({ name, value, options }) =>
           response.cookies.set(name, value, options)
         );
@@ -28,12 +28,8 @@ async function isAdmin(supabase: ReturnType<typeof createSupabaseClient>, userId
   return Boolean(data?.user_id);
 }
 
-function isDemoAdmin(request: NextRequest) {
-  return request.cookies.get("shivora_admin_demo")?.value === "true";
-}
-
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: request.headers,
     },
@@ -45,18 +41,13 @@ export async function middleware(request: NextRequest) {
 
   const isAdminLogin = pathname.startsWith("/admin/login");
   const isAdminForbidden = pathname.startsWith("/admin/forbidden");
-  const isDemoLoginApi = pathname === "/api/admin/login";
+  const isAdminLoginApi = pathname === "/api/admin/login";
 
   if (!isAdminPath && !isAdminApiPath) {
     return response;
   }
 
-  if (isAdminLogin || isAdminForbidden || isDemoLoginApi) {
-    return response;
-  }
-
-  // Check demo admin first
-  if (isDemoAdmin(request)) {
+  if (isAdminLogin || isAdminForbidden || isAdminLoginApi) {
     return response;
   }
 

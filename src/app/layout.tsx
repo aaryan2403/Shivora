@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant, Montserrat } from "next/font/google";
+import { Cormorant, Montserrat, Cinzel } from "next/font/google";
 import "./globals.css";
 import { ShopProvider } from "../context/ShopContext";
 import { ThemeProvider } from "../context/ThemeContext";
@@ -25,6 +25,12 @@ const montserrat = Montserrat({
   weight: ["400", "500", "600", "700"],
 });
 
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://myshivora.com"),
   title: "Shivora",
@@ -39,7 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${montserrat.variable} ${cormorant.variable} antialiased bg-creme text-obsidian min-h-screen font-sans selection:bg-primary/20`}
+        className={`${montserrat.variable} ${cormorant.variable} ${cinzel.variable} antialiased bg-creme text-obsidian min-h-screen font-sans selection:bg-primary/20`}
       >
         <ThemeProvider>
           <ShopProvider>

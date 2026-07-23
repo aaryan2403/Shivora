@@ -1,23 +1,19 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { promises as fs } from "fs";
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import { promisify } from "util";
 import path from "path";
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
+
+function git(args: string[], cwd: string) {
+  return execFileAsync("git", args, { cwd });
+}
 
 export const dynamic = "force-dynamic";
 
-async function requireAdmin(request: Request) {
-  // Check demo admin cookie
-  const cookieHeader = request.headers.get("cookie") || "";
-  const isDemo = cookieHeader.includes("shivora_admin_demo=true");
-  
-  if (isDemo) {
-    return { authorized: true as const, supabase: null };
-  }
-
+async function requireAdmin() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -80,7 +76,7 @@ ${items.join(",\n")},
 }
 
 export async function POST(request: Request) {
-  const auth = await requireAdmin(request);
+  const auth = await requireAdmin();
   if (!auth.authorized) {
     return NextResponse.json(
       { error: auth.error },
@@ -93,27 +89,19 @@ export async function POST(request: Request) {
     const { message = "Update products from admin panel" } = body;
 
     // Fetch all products from Supabase
-    let products: Record<string, unknown>[] = [];
-    if (auth.supabase) {
-      const { data, error } = await auth.supabase
-        .from("products")
-        .select("*")
-        .order("id", { ascending: true });
-
-      if (error) {
-        return NextResponse.json(
-          { error: `Failed to fetch products: ${error.message}` },
-          { status: 500 }
-        );
-      }
-      products = data || [];
-    } else {
-      // Demo mode - no DB access, skip file generation but allow git push
-      // if there are pending changes in the working directory
+    const { data: products, error } = await auth.supabase
+      .from("products")
+      .select("*")
+      .order("id", { ascending: true });
+    if (error) {
+      return NextResponse.json(
+        { error: `Failed to fetch products: ${error.message}` },
+        { status: 500 }
+      );
     }
 
     // Write products to file
-    if (products.length > 0) {
+    if ((products ?? []).length > 0) {
       const fileContent = generateProductsFile(products);
       const filePath = path.join(process.cwd(), "src", "data", "products.ts");
       await fs.writeFile(filePath, fileContent, "utf-8");
@@ -124,7 +112,7 @@ export async function POST(request: Request) {
     const results: string[] = [];
 
     try {
-      const { stdout: statusOut } = await execAsync("git status --porcelain", { cwd });
+      const { stdout: statusOut } = await git(["status", "--porcelain"], cwd);
       
       if (!statusOut.trim()) {
         return NextResponse.json({
@@ -135,16 +123,16 @@ export async function POST(request: Request) {
         });
       }
 
-      const { stdout: addOut } = await execAsync("git add -A", { cwd });
+      const commitMessage = typeof message === "string" && message.trim()
+        ? message
+        : "Update products from admin panel";
+      const { stdout: addOut } = await git(["add", "-A"], cwd);
       results.push(`git add: ${addOut || "OK"}`);
 
-      const { stdout: commitOut } = await execAsync(
-        `git commit -m "${message.replace(/"/g, '\\"')}"`,
-        { cwd }
-      );
+      const { stdout: commitOut } = await git(["commit", "-m", commitMessage], cwd);
       results.push(`git commit: ${commitOut || "OK"}`);
 
-      const { stdout: pushOut } = await execAsync("git push", { cwd });
+      const { stdout: pushOut } = await git(["push"], cwd);
       results.push(`git push: ${pushOut || "OK"}`);
 
       return NextResponse.json({

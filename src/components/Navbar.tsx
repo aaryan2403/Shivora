@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, User as UserIcon, Heart, ShoppingCart, LogIn, LogOut } from "lucide-react";
+import { Search, User as UserIcon, Heart, ShoppingCart, LogIn, LogOut, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useShop } from "../context/ShopContext";
 
@@ -24,6 +24,7 @@ export default function Navbar() {
 
   const [hasScrolledPastHero, setHasScrolledPastHero] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const isVisible = !isHome || hasScrolledPastHero;
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -166,19 +167,68 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu Icons */}
-      <div className="md:hidden flex gap-6 text-xs items-center">
+      <div className="md:hidden flex gap-5 text-xs items-center">
           <button type="button" onClick={() => setIsSearchOpen(true)} aria-label="Open search" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300">
-            <Search size={14} />
+            <Search size={16} />
           </button>
           <button type="button" onClick={() => setIsWishlistOpen(true)} aria-label={`Open wishlist (${wishlist.length} items)`} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-1">
-            <Heart size={14} className={wishlist.length > 0 ? "fill-creme text-creme" : ""} />
+            <Heart size={16} className={wishlist.length > 0 ? "fill-creme text-creme" : ""} />
             <span>{wishlist.length}</span>
           </button>
           <button type="button" onClick={() => setIsCartOpen(true)} aria-label={`Open cart (${cart.length} items)`} className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 flex items-center gap-1">
-            <ShoppingCart size={14} className={cart.length > 0 ? "fill-creme text-creme" : ""} />
+            <ShoppingCart size={16} className={cart.length > 0 ? "fill-creme text-creme" : ""} />
             <span>{cart.length}</span>
           </button>
+          <button type="button" onClick={() => setIsMobileMenuOpen(prev => !prev)} aria-label="Open menu" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300">
+            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
       </div>
+
+      {/* Mobile slide-down menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="md:hidden absolute top-full left-0 w-full bg-obsidian/97 backdrop-blur-lg border-b border-ash/10 shadow-2xl px-6 py-6 flex flex-col gap-1"
+          >
+            {[
+              { label: "All Collections", href: "/collections" },
+              { label: "Necklaces", href: "/collections?category=Necklaces" },
+              { label: "Bracelets", href: "/collections?category=Bracelets" },
+              { label: "Rings", href: "/collections?category=Rings" },
+              { label: "Earrings", href: "/collections?category=Earrings" },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="py-3 text-xs tracking-[0.2em] uppercase font-bold text-ash hover:text-creme border-b border-ash/10 transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="pt-4">
+              {user ? (
+                <div className="flex flex-col gap-1">
+                  <Link href="/account" onClick={() => setIsMobileMenuOpen(false)} className="py-3 text-xs tracking-[0.2em] uppercase font-bold text-ash hover:text-creme flex items-center gap-2 transition-colors">
+                    <UserIcon size={14} /> My Account
+                  </Link>
+                  <button type="button" onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="py-3 text-xs tracking-[0.2em] uppercase font-bold text-ash hover:text-creme flex items-center gap-2 transition-colors text-left">
+                    <LogOut size={14} /> Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button type="button" onClick={() => { setIsAuthOpen(true); setIsMobileMenuOpen(false); }} className="py-3 text-xs tracking-[0.2em] uppercase font-bold text-ash hover:text-creme flex items-center gap-2 transition-colors">
+                  <LogIn size={14} /> Login
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }

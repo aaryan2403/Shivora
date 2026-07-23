@@ -176,5 +176,178 @@ CREATE POLICY "Authenticated delete hero-images"
   USING (bucket_id = 'hero-images');
 
 -- ============================================================
--- 5. DONE
+-- 5. SECURITY HARDENING (overrides the permissive policies above)
+-- Re-run this whole file to apply. This section is what actually
+-- closes the holes: only admins may write catalog data or read
+-- other customers' orders; customers can read only their own.
+-- ============================================================
+
+-- Helper: is the current request from an admin user?
+-- SECURITY DEFINER so it can read the admins table regardless of the
+-- caller's own RLS, avoiding recursive policy evaluation.
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.admins a WHERE a.user_id = auth.uid()
+  );
+$$;
+
+-- --- products: public read, ADMIN-ONLY write ---
+DROP POLICY IF EXISTS "Authenticated users can manage products" ON public.products;
+CREATE POLICY "Admins can manage products"
+  ON public.products FOR ALL TO authenticated
+  USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+-- --- site_settings: public read, ADMIN-ONLY write ---
+DROP POLICY IF EXISTS "Authenticated users can manage site settings" ON public.site_settings;
+CREATE POLICY "Admins can manage site settings"
+  ON public.site_settings FOR ALL TO authenticated
+  USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+-- --- orders: anon may create (checkout); read scoped to owner or admin ---
+DROP POLICY IF EXISTS "Public can read own orders" ON public.orders;
+DROP POLICY IF EXISTS "Authenticated users can manage orders" ON public.orders;
+
+CREATE POLICY "Customers read their own orders"
+  ON public.orders FOR SELECT TO authenticated
+  USING (public.is_admin() OR customer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY "Admins manage orders"
+  ON public.orders FOR UPDATE TO authenticated
+  USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+CREATE POLICY "Admins delete orders"
+  ON public.orders FOR DELETE TO authenticated
+  USING (public.is_admin());
+
+-- --- order_items: read scoped to the parent order's owner or admin ---
+DROP POLICY IF EXISTS "Authenticated users can manage order items" ON public.order_items;
+
+CREATE POLICY "Customers read their own order items"
+  ON public.order_items FOR SELECT TO authenticated
+  USING (
+    public.is_admin() OR EXISTS (
+      SELECT 1 FROM public.orders o
+      WHERE o.id = order_items.order_id
+        AND o.customer_email = (auth.jwt() ->> 'email')
+    )
+  );
+
+CREATE POLICY "Admins manage order items"
+  ON public.order_items FOR UPDATE TO authenticated
+  USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+CREATE POLICY "Admins delete order items"
+  ON public.order_items FOR DELETE TO authenticated
+  USING (public.is_admin());
+
+-- --- messages: contact-form submissions ---
+CREATE TABLE IF NOT EXISTS public.messages (
+  id         serial PRIMARY KEY,
+  name       text NOT NULL,
+  email      text NOT NULL,
+  subject    text,
+  message    text NOT NULL,
+  status     text NOT NULL DEFAULT 'new',
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anyone can submit a message" ON public.messages;
+DROP POLICY IF EXISTS "Admins can read messages" ON public.messages;
+DROP POLICY IF EXISTS "Admins can manage messages" ON public.messages;
+
+CREATE POLICY "Anyone can submit a message"
+  ON public.messages FOR INSERT TO anon, authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Admins can read messages"
+  ON public.messages FOR SELECT TO authenticated
+  USING (public.is_admin());
+
+CREATE POLICY "Admins can manage messages"
+  ON public.messages FOR UPDATE TO authenticated
+  USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+-- --- storage: uploads/deletes ADMIN-ONLY (public read stays) ---
+DROP POLICY IF EXISTS "Authenticated upload product-images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated delete product-images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated upload hero-images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated delete hero-images" ON storage.objects;
+
+CREATE POLICY "Admins upload product-images"
+  ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'product-images' AND public.is_admin());
+
+CREATE POLICY "Admins delete product-images"
+  ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'product-images' AND public.is_admin());
+
+CREATE POLICY "Admins upload hero-images"
+  ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'hero-images' AND public.is_admin());
+
+CREATE POLICY "Admins delete hero-images"
+  ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'hero-images' AND public.is_admin());
+
+-- Checkout writes are limited to this RPC, which computes no trust boundary
+-- itself: the server API passes database-derived prices and validated items.
+DROP POLICY IF EXISTS "Public can create orders" ON public.orders;
+DROP POLICY IF EXISTS "Public can create order items" ON public.order_items;
+
+CREATE OR REPLACE FUNCTION public.create_order(
+  p_customer_email text, p_customer_name text, p_shipping_address text,
+  p_city text, p_zip_code text, p_total_amount text, p_items jsonb
+) RETURNS integer
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+AS $$
+DECLARE v_order_id integer; v_item jsonb;
+BEGIN
+  INSERT INTO public.orders (customer_email, customer_name, shipping_address, city, zip_code, total_amount, status)
+  VALUES (p_customer_email, p_customer_name, p_shipping_address, p_city, p_zip_code, p_total_amount, 'pending')
+  RETURNING id INTO v_order_id;
+  FOR v_item IN SELECT * FROM jsonb_array_elements(p_items) LOOP
+    INSERT INTO public.order_items (order_id, product_id, quantity, price_at_time)
+    VALUES (v_order_id, (v_item->>'product_id')::integer, (v_item->>'quantity')::integer, v_item->>'price_at_time');
+    UPDATE public.products
+    SET stock = GREATEST(0, stock - (v_item->>'quantity')::integer)
+    WHERE id = (v_item->>'product_id')::integer AND stock IS NOT NULL;
+  END LOOP;
+  RETURN v_order_id;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION public.create_order(text, text, text, text, text, text, jsonb) TO anon, authenticated;
+
+-- Storage updates are required for upsert uploads and remain admin-only.
+DROP POLICY IF EXISTS "Admins update product-images" ON storage.objects;
+DROP POLICY IF EXISTS "Admins update hero-images" ON storage.objects;
+CREATE POLICY "Admins update product-images" ON storage.objects FOR UPDATE TO authenticated
+  USING (bucket_id = 'product-images' AND public.is_admin())
+  WITH CHECK (bucket_id = 'product-images' AND public.is_admin());
+CREATE POLICY "Admins update hero-images" ON storage.objects FOR UPDATE TO authenticated
+  USING (bucket_id = 'hero-images' AND public.is_admin())
+  WITH CHECK (bucket_id = 'hero-images' AND public.is_admin());
+
+-- ============================================================
+-- 6. STRIPE PAYMENTS
+-- Adds payment tracking to orders. Idempotent — safe to re-run.
+-- ============================================================
+
+ALTER TABLE public.orders
+  ADD COLUMN IF NOT EXISTS payment_status        text DEFAULT 'unpaid',
+  ADD COLUMN IF NOT EXISTS stripe_session_id     text,
+  ADD COLUMN IF NOT EXISTS stripe_payment_intent text;
+
+-- Backfill any pre-existing rows so the admin UI renders cleanly.
+UPDATE public.orders SET payment_status = 'unpaid' WHERE payment_status IS NULL;
+
+-- ============================================================
+-- 7. DONE
 -- ============================================================

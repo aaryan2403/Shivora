@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { Instagram, Twitter, Facebook } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-obsidian text-creme border-t border-ash/10 py-16 px-6 md:px-12 lg:px-24">
+    <footer className="bg-obsidian text-creme border-t border-ash/10 pt-16 pb-10 px-6 md:px-12 lg:px-24">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
-        
+
         {/* Brand Column */}
         <div className="md:col-span-4 flex flex-col">
           <div className="relative w-72 h-25 mb-6 ml-[-8vh]">
@@ -39,10 +40,23 @@ export default function Footer() {
         <div className="md:col-span-4 flex flex-col gap-4">
           <h4 className="font-serif text-lg mb-2">Connect</h4>
           <p className="text-ash font-medium text-sm mb-4">Follow us for exclusive reveals and behind-the-scenes craftsmanship.</p>
-          <div className="flex gap-6 text-ash">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="cursor-pointer hover:text-creme transition-colors duration-200">IG</a>
-            <a href="https://pinterest.com" target="_blank" rel="noreferrer" aria-label="Pinterest" className="cursor-pointer hover:text-creme transition-colors duration-200">PT</a>
-            <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter / X" className="cursor-pointer hover:text-creme transition-colors duration-200">X</a>
+          <div className="flex gap-3 text-ash">
+            {[
+              { Icon: Instagram, href: "https://instagram.com", label: "Instagram" },
+              { Icon: Facebook, href: "https://facebook.com", label: "Facebook" },
+              { Icon: Twitter, href: "https://twitter.com", label: "Twitter / X" },
+            ].map(({ Icon, href, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={label}
+                className="w-10 h-10 flex items-center justify-center rounded-full border border-ash/25 text-ash hover:text-obsidian hover:bg-primary hover:border-primary transition-all duration-300"
+              >
+                <Icon size={16} strokeWidth={1.6} />
+              </a>
+            ))}
           </div>
         </div>
 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
 import { Lock } from "lucide-react";
 import { useShop } from "../../context/ShopContext";
@@ -15,17 +14,20 @@ export default function CheckoutPage() {
     address: "",
     city: "",
     zipCode: "",
-    cardNumber: "",
-    expiry: "",
-    cvc: ""
   });
 
-  const { cart, clearCart } = useShop();
+  const { cart } = useShop();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [canceled, setCanceled] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("canceled")) {
+      setCanceled(true);
+    }
+  }, []);
 
   useEffect(() => {
     // Check if all fields have some value
@@ -54,58 +56,29 @@ export default function CheckoutPage() {
     setError(null);
 
     try {
-      // Strip sensitive card data before sending to server
-      const { cardNumber, expiry, cvc, ...safeCustomerInfo } = formData;
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cart,
-          customerInfo: safeCustomerInfo,
-          total: cartTotal,
+          customerInfo: formData,
         })
       });
 
       const data = await res.json();
 
-      if (!res.ok) {
+      if (!res.ok || !data.url) {
         throw new Error(data.error || "Checkout failed");
       }
 
-      clearCart();
-      setIsSuccess(true);
+      // Hand off to Stripe's hosted payment page. The cart is cleared
+      // only after payment succeeds (on the success page / by the user).
+      window.location.href = data.url;
     } catch (err: any) {
       setError(err.message);
-    } finally {
       setIsSubmitting(false);
     }
   };
-
-  if (isSuccess) {
-    return (
-      <main className="min-h-screen bg-obsidian text-creme flex flex-col items-center justify-center p-6 selection:bg-ash selection:text-obsidian">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center max-w-md"
-        >
-          <div className="w-20 h-20 bg-ash/10 rounded-full flex items-center justify-center mx-auto mb-8">
-            <Lock className="text-ash" size={32} />
-          </div>
-          <h1 className="font-serif text-4xl mb-4">Payment Successful</h1>
-          <p className="text-ash font-medium mb-10 leading-relaxed">
-            Your order has been secured. You will receive a confirmation email shortly.
-          </p>
-          <Link 
-            href="/"
-            className="px-10 py-4 border border-ash/20 text-xs tracking-[0.2em] uppercase cursor-pointer hover:bg-primary hover:border-primary hover:text-creme transition-all duration-300 inline-block hover:scale-105"
-          >
-            Return to Store
-          </Link>
-        </motion.div>
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
@@ -168,21 +141,15 @@ export default function CheckoutPage() {
           <section className="bg-ash/5 p-8 border border-ash/10">
             <h2 className="font-serif text-2xl mb-6 flex items-center gap-3">
               <span className="text-xs bg-creme text-obsidian w-6 h-6 flex items-center justify-center rounded-full font-sans font-bold">3</span>
-              Payment Method
+              Payment
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-2 md:col-span-2">
-                <label htmlFor="checkout-card-number" className="text-xs uppercase tracking-[0.2em] text-ash">Card Number</label>
-                <input id="checkout-card-number" required type="text" name="cardNumber" placeholder="0000 0000 0000 0000" value={formData.cardNumber} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium placeholder:text-ash/30" />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="checkout-expiry" className="text-xs uppercase tracking-[0.2em] text-ash">Expiry Date</label>
-                <input id="checkout-expiry" required type="text" name="expiry" placeholder="MM/YY" value={formData.expiry} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium placeholder:text-ash/30" />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="checkout-cvc" className="text-xs uppercase tracking-[0.2em] text-ash">CVC</label>
-                <input id="checkout-cvc" required type="text" name="cvc" placeholder="123" value={formData.cvc} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium placeholder:text-ash/30" />
-              </div>
+            <div className="flex items-start gap-3 text-sm text-ash leading-relaxed">
+              <Lock size={18} className="mt-0.5 flex-shrink-0 text-creme" />
+              <p>
+                Payment is completed securely on Stripe&rsquo;s hosted checkout. You&rsquo;ll be
+                redirected after confirming your details below. We never see or store your card
+                information.
+              </p>
             </div>
           </section>
 
@@ -211,6 +178,12 @@ export default function CheckoutPage() {
               </span>
             </label>
 
+            {canceled && !error && (
+              <div className="mb-6 p-4 border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 text-sm rounded-sm">
+                Payment was canceled. Your cart is intact — you can try again whenever you&rsquo;re ready.
+              </div>
+            )}
+
             {error && (
               <div className="mb-6 p-4 border border-red-500/50 bg-red-500/10 text-red-200 text-sm rounded-sm">
                 {error}
@@ -222,9 +195,9 @@ export default function CheckoutPage() {
               disabled={!isFormValid || isSubmitting || cart.length === 0}
               className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {isSubmitting ? "Processing..." : (
+              {isSubmitting ? "Redirecting to secure payment..." : (
                 <>
-                  <Lock size={14} /> Pay ${cartTotal.toLocaleString()}
+                  <Lock size={14} /> Continue to Payment &mdash; ${cartTotal.toLocaleString()}
                 </>
               )}
             </button>

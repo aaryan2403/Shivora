@@ -40,8 +40,9 @@ function CollectionsContent() {
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 pt-4">
         <div className="text-center mb-16">
-          <span className="text-ash tracking-[0.3em] uppercase text-xs mb-4 block">Catalogue</span>
-          <h1 className="font-serif text-4xl md:text-5xl mb-6">The Collections</h1>
+          <span className="eyebrow block mb-4">Catalogue</span>
+          <h1 className="font-serif text-4xl md:text-5xl mb-5">The Collections</h1>
+          <div className="w-14 h-px bg-ash/30 mx-auto mb-5" />
           <p className="text-ash font-medium leading-relaxed max-w-xl mx-auto">
             Explore our exclusive pieces. Each item is a perfection in every detail, crafted to transcend time.
           </p>
@@ -92,29 +93,29 @@ function CollectionsContent() {
                 key={product.id}
                 className="group flex flex-col cursor-pointer"
               >
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-ash/10 mb-6 rounded-sm shadow-lg group-hover:shadow-primary/10 transition-shadow duration-500">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-ash/10 mb-6 rounded-sm shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)] group-hover:shadow-[0_24px_60px_-24px_rgba(0,0,0,0.55)] transition-shadow duration-500">
                   <Image
                     src={product.image}
                     alt={product.name}
                     fill
                     className={`object-cover transition-transform duration-700 group-hover:scale-110 ${
-                      product.collection === 'Obsidian' ? 'grayscale contrast-125' : 
+                      product.collection === 'Obsidian' ? 'grayscale contrast-125' :
                       product.collection === 'Ash' ? 'sepia-[.2] hue-rotate-180 brightness-75' : ''
                     }`}
                   />
-                  
+
                   {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-obsidian/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center gap-4 backdrop-blur-[2px]">
-                    <button 
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center gap-3">
+                    <button
                       onClick={() => { addToCart(product); setIsCartOpen(true); }}
-                      className="bg-creme text-obsidian px-8 py-3 rounded-sm flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 cursor-pointer hover:bg-primary hover:text-creme hover:scale-105"
+                      className="bg-creme text-obsidian px-8 py-3 rounded-full flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 cursor-pointer hover:bg-primary hover:text-obsidian hover:scale-105 shadow-lg"
                     >
                       <ShoppingBag size={16} />
                       <span className="text-xs uppercase tracking-[0.2em] font-semibold">Add to Cart</span>
                     </button>
-                    <button 
+                    <button
                       onClick={() => toggleWishlist(product)}
-                      className="bg-obsidian/80 backdrop-blur-md text-creme px-8 py-3 rounded-sm flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75 cursor-pointer hover:bg-primary/80 hover:scale-105"
+                      className="bg-white/15 backdrop-blur-md text-white border border-white/25 px-8 py-3 rounded-full flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75 cursor-pointer hover:bg-white/25 hover:scale-105"
                     >
                       <Heart size={16} className={wishlist.find(w => w.id === product.id) ? "fill-creme" : ""} />
                       <span className="text-xs uppercase tracking-[0.2em] font-semibold">

@@ -10,7 +10,7 @@ function LoginForm() {
   const params = useSearchParams();
   const nextPath = params.get("next") || "/admin";
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ function LoginForm() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
@@ -34,7 +34,7 @@ function LoginForm() {
         throw new Error(data.error || "Login failed");
       }
 
-      localStorage.setItem("shivora_user", JSON.stringify({ name: "Admin", email: "shivoraadmin@gmail.com" }));
+      localStorage.setItem("shivora_user", JSON.stringify({ name: "Admin", email }));
       router.replace(nextPath);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");
@@ -77,14 +77,14 @@ function LoginForm() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <label className="text-[10px] uppercase tracking-[0.2em] text-ash mb-2 block">Username</label>
+              <label className="text-[10px] uppercase tracking-[0.2em] text-ash mb-2 block">Email</label>
               <div className="relative">
                 <User size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-ash/60" />
                 <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter username"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter admin email"
                   className="w-full bg-obsidian/40 border border-ash/20 pl-10 pr-4 py-3 text-sm text-creme outline-none focus:border-primary/50 focus:bg-obsidian/60 transition-all duration-300 placeholder:text-ash/40"
                   required
                 />
