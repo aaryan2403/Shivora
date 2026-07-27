@@ -41,12 +41,6 @@ export default function Home() {
 
   return (
     <main className="relative selection:bg-ash selection:text-creme bg-obsidian">
-      {/* Announcement Bar */}
-      <div className="absolute top-0 w-full bg-creme text-obsidian text-[10px] tracking-[0.3em] uppercase py-2.5 text-center z-[60] font-semibold mix-blend-normal flex items-center justify-center gap-2">
-        <Sparkles size={11} className="opacity-70" />
-        Complimentary Global Shipping · Signature Gift Wrapping
-      </div>
-
       {/* IMMERSIVE INTRO SECTION */}
       <motion.div 
         ref={introRef} 

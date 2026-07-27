@@ -65,18 +65,21 @@ export default function SearchOverlay() {
             role="dialog"
             aria-modal="true"
             aria-label="Search"
-            className="fixed top-0 left-0 w-full bg-obsidian border-b border-ash/10 z-[160] p-8 md:p-12 shadow-2xl"
+            className="fixed top-0 left-0 w-full bg-obsidian border-b border-ash/10 z-[160] px-6 pt-14 pb-8 md:p-12 shadow-2xl"
           >
+            {/* Anchored to the panel, not the inner column, so it stays in the
+                corner instead of drifting off-screen on narrow viewports. */}
+            <button
+              type="button"
+              onClick={() => setIsSearchOpen(false)}
+              aria-label="Close search"
+              className="absolute top-3 right-3 md:top-6 md:right-6 text-ash cursor-pointer hover:text-creme transition-colors duration-200 p-2"
+            >
+              <X size={24} />
+            </button>
+
             <div className="max-w-4xl mx-auto relative">
-              <button 
-                type="button"
-                onClick={() => setIsSearchOpen(false)}
-                aria-label="Close search"
-                className="absolute -top-6 -right-4 text-ash cursor-pointer hover:text-creme transition-colors duration-200 p-2"
-              >
-                <X size={24} />
-              </button>
-              
+
               <div className="flex items-center gap-4 border-b border-ash/20 pb-4">
                 <Search size={24} className="text-creme" />
                 <input

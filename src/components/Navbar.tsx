@@ -80,7 +80,7 @@ export default function Navbar() {
         pointerEvents: isVisible ? "auto" : "none"
       }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`fixed top-0 w-full ${NAVBAR_THICKNESS} px-6 md:px-10 flex justify-between items-center z-[100] text-creme transition-all duration-300 bg-gradient-to-b from-primary/80 to-transparent`}
+      className={`fixed top-8 w-full ${NAVBAR_THICKNESS} px-6 md:px-10 flex justify-between items-center z-[100] text-creme transition-all duration-300 bg-gradient-to-b from-primary/80 to-transparent`}
     >
       <Link href="/" className="relative w-72 h-25 ml-[-8vh]">
         <Image src="/shivlogo1.png" alt="Shivora Logo" fill className="object-contain" priority />
