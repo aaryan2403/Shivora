@@ -23,7 +23,7 @@ export default function AboutPage() {
           </p>
           <p>
             As a homegrown, family-run business, we believe in honest service, attention to detail, and treating every
-            customer like family. Your support means more than just a purchase it helps a dream continue to grow.
+            customer like family. Your support means more than just a purchase—it helps a dream continue to grow.
           </p>
           <p>
             Thank you for being a part of our journey. We look forward to helping you find jewelry you&apos;ll love to
