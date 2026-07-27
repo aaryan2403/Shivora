@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { Lock } from "lucide-react";
 import { useShop } from "../../context/ShopContext";
 
@@ -174,7 +175,12 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <span className="text-sm text-ash group-hover:text-creme transition-colors font-medium leading-relaxed">
-                I accept with the terms and policy and privacy regulations. I understand that all sales are final for these exclusive items.
+                I have read and accept the{" "}
+                <Link href="/terms-of-service" target="_blank" className="underline text-creme hover:text-primary">Terms &amp; Conditions</Link>
+                {" "}and{" "}
+                <Link href="/privacy-policy" target="_blank" className="underline text-creme hover:text-primary">Privacy Policy</Link>.
+                I understand that imitation jewelry is only eligible for a return or exchange if it arrives
+                damaged, defective, or incorrect, and that I must report this within 48 hours of delivery.
               </span>
             </label>
 

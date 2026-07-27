@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, Twitter, Facebook } from "lucide-react";
+import { Instagram } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -32,8 +32,7 @@ export default function Footer() {
         <div className="md:col-span-2 flex flex-col gap-4 text-sm font-medium">
           <h4 className="font-serif text-lg mb-2">Assistance</h4>
           <Link href="/contact" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">Contact Us</Link>
-          <Link href="/faq" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">FAQ</Link>
-          <Link href="/heritage" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">About Us</Link>
+          <Link href="/about" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">About Us</Link>
         </div>
 
         {/* Social */}
@@ -42,9 +41,7 @@ export default function Footer() {
           <p className="text-ash font-medium text-sm mb-4">Follow us for exclusive reveals and behind-the-scenes craftsmanship.</p>
           <div className="flex gap-3 text-ash">
             {[
-              { Icon: Instagram, href: "https://instagram.com", label: "Instagram" },
-              { Icon: Facebook, href: "https://facebook.com", label: "Facebook" },
-              { Icon: Twitter, href: "https://twitter.com", label: "Twitter / X" },
+              { Icon: Instagram, href: "https://instagram.com/myshivora", label: "Instagram" },
             ].map(({ Icon, href, label }) => (
               <a
                 key={label}
@@ -65,7 +62,7 @@ export default function Footer() {
           <span>© {new Date().getFullYear()} Shivora. All Rights Reserved.</span>
           <div className="flex gap-6">
             <Link href="/privacy-policy" className="cursor-pointer hover:text-creme transition-colors duration-200">Privacy Policy</Link>
-            <Link href="/terms-of-service" className="cursor-pointer hover:text-creme transition-colors duration-200">Terms of Service</Link>
+            <Link href="/terms-of-service" className="cursor-pointer hover:text-creme transition-colors duration-200">Terms &amp; Conditions</Link>
           </div>
         </div>
       </div>

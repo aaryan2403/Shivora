@@ -258,12 +258,12 @@ export default function Home() {
                 />
               </div>
               <div className="w-full md:w-1/2 flex flex-col justify-center">
-                <span className="eyebrow block mb-4">Our Heritage</span>
-                <h2 className="font-serif text-3xl md:text-5xl mb-6">Mastery in Every Detail</h2>
+                <span className="eyebrow block mb-4">About Us</span>
+                <h2 className="font-serif text-3xl md:text-5xl mb-6">Care in Every Detail</h2>
                 <p className="text-ash text-sm leading-relaxed mb-8 max-w-md font-medium">
-                  For over a century, our artisans have poured their soul into every creation. We source only the most exceptional materials, ensuring that when you acquire a piece from Shivora, you inherit a legacy of uncompromised perfection.
+                  Shivora is a homegrown, family-run business. Every piece in our collection is thoughtfully chosen to bring elegance to your everyday look and help you celebrate life&apos;s special moments without compromising on quality or price.
                 </p>
-                <Link href="/heritage" className="btn-outline self-start">
+                <Link href="/about" className="btn-outline self-start">
                   Discover Our Story
                 </Link>
               </div>

@@ -12,6 +12,7 @@ import WishlistSidebar from "../components/WishlistSidebar";
 import GlobalProductModal from "../components/GlobalProductModal";
 import Footer from "../components/Footer";
 import LoginPrompt from "../components/LoginPrompt";
+import LegalConsentModal from "../components/LegalConsentModal";
 
 const cormorant = Cormorant({
   variable: "--font-cormorant",
@@ -56,6 +57,7 @@ export default function RootLayout({
             <CartSidebar />
             <GlobalProductModal />
             <WishlistSidebar />
+            <LegalConsentModal />
             {children}
             <Footer />
           </ShopProvider>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, MapPin, Phone, Check, Loader2 } from "lucide-react";
+import { Mail, Instagram, Phone, Check, Loader2 } from "lucide-react";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "General Inquiry", message: "", company: "" });
@@ -64,19 +64,16 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-cinzel text-xl mb-2">Phone</h3>
                 <p className="text-ash text-sm mb-2">Mon-Fri, 9am - 6pm EST</p>
-                <a href="tel:+18005550123" className="text-creme hover:text-ash transition-colors text-lg">+1 (800) 555-0123</a>
+                <a href="tel:+14164185350" className="text-creme hover:text-ash transition-colors text-lg">+1 (416) 418-5350</a>
               </div>
             </div>
 
             <div className="flex gap-6 items-start">
-              <div className="mt-1 shrink-0 text-creme p-3 border border-ash/10 rounded-full"><MapPin size={20} /></div>
+              <div className="mt-1 shrink-0 text-creme p-3 border border-ash/10 rounded-full"><Instagram size={20} /></div>
               <div>
-                <h3 className="font-cinzel text-xl mb-2">Boutique</h3>
-                <p className="text-ash text-sm leading-relaxed text-lg">
-                  123 Obsidian Avenue,<br />
-                  New York, NY 10012<br />
-                  United States
-                </p>
+                <h3 className="font-cinzel text-xl mb-2">Instagram</h3>
+                <p className="text-ash text-sm mb-2">Follow us for new arrivals</p>
+                <a href="https://instagram.com/myshivora" target="_blank" rel="noreferrer" className="text-creme hover:text-ash transition-colors text-lg">@myshivora</a>
               </div>
             </div>
           </div>
