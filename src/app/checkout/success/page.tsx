@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import ClearCartOnSuccess from "./ClearCartOnSuccess";
 
@@ -10,7 +10,7 @@ type SearchParams = Promise<{ session_id?: string }>;
 async function resolveOrder(sessionId: string | undefined) {
   if (!sessionId) return { paid: false, orderId: null as string | null };
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const session = await getStripe().checkout.sessions.retrieve(sessionId);
     const orderId = session.metadata?.order_id ?? session.client_reference_id ?? null;
     const paid = session.payment_status === "paid";
 
