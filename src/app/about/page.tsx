@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
@@ -9,11 +11,24 @@ export default function AboutPage() {
           <h1 className="font-cinzel text-4xl md:text-5xl">About Us</h1>
         </div>
 
+        <div className="mb-12 flex justify-center">
+          <div className="relative w-48 h-48 md:w-60 md:h-60 rounded-full overflow-hidden border border-ash/30">
+            <Image
+              src="/about-sahana.jpeg"
+              alt="Sahana, founder of Shivora"
+              fill
+              sizes="(min-width: 768px) 240px, 192px"
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+
         <div className="space-y-6 text-ash font-medium leading-relaxed">
           <p>
-            Hi, I&apos;m <span className="text-creme font-semibold">Sahana</span>, a 40-year-old mother of two and the
-            founder of this small business. For as long as I can remember, I&apos;ve dreamed of owning a business that
-            reflects my passion for style, creativity, and helping others feel confident.
+            Hi, I&apos;m <span className="text-creme font-semibold">Sahana</span>, a mother of two and the founder of
+            this small business. For as long as I can remember, I&apos;ve dreamed of owning a business that reflects my
+            passion for style, creativity, and helping others feel confident.
           </p>
           <p>
             That dream became a reality when I started this imitation jewelry business from my home. What began as a
