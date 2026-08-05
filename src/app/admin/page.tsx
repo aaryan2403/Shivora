@@ -241,6 +241,38 @@ export default function AdminPage() {
     checkAdmin();
   }, []);
 
+  // These must run unconditionally, before the early returns below — React
+  // requires the same hooks in the same order on every render. They used to
+  // sit after the isAdminVerified checks, which meant an actual admin (whose
+  // first render bails out early on isAdminVerified === null, then re-renders
+  // without bailing once verification resolves) called three more hooks than
+  // the previous render did. React throws "Rendered more hooks than during
+  // the previous render" (minified error #310) the instant that happens —
+  // which is exactly why this only ever crashed for a real admin account.
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = categoryFilter === "All" || p.category === categoryFilter;
+      const matchesCollection = collectionFilter === "All" || p.collection === collectionFilter;
+      return matchesSearch && matchesCategory && matchesCollection;
+    });
+  }, [products, searchQuery, categoryFilter, collectionFilter]);
+
+  const totalStock = useMemo(() => products.reduce((sum, p) => sum + (p.stock || 0), 0), [products]);
+
+  const resetForm = useCallback(() => {
+    setFormName("");
+    setFormCategory("Rings");
+    setFormCollection("Necklaces");
+    setFormPrice("");
+    setFormDescription("");
+    setFormStock("");
+    setFormColor("");
+    setFormImages([]);
+    setImageUrlInput("");
+    setEditingProduct(null);
+  }, []);
+
   if (isAdminVerified === null) {
     return (
       <main className="min-h-screen bg-obsidian text-creme flex items-center justify-center">
@@ -376,30 +408,6 @@ export default function AdminPage() {
 
   const categories = ["All", "Rings", "Necklaces", "Earrings", "Bracelets", "Headwear"];
   const collections = ["All", "Necklaces", "Bracelets", "Earrings"];
-
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = categoryFilter === "All" || p.category === categoryFilter;
-      const matchesCollection = collectionFilter === "All" || p.collection === collectionFilter;
-      return matchesSearch && matchesCategory && matchesCollection;
-    });
-  }, [products, searchQuery, categoryFilter, collectionFilter]);
-
-  const totalStock = useMemo(() => products.reduce((sum, p) => sum + (p.stock || 0), 0), [products]);
-
-  const resetForm = useCallback(() => {
-    setFormName("");
-    setFormCategory("Rings");
-    setFormCollection("Necklaces");
-    setFormPrice("");
-    setFormDescription("");
-    setFormStock("");
-    setFormColor("");
-    setFormImages([]);
-    setImageUrlInput("");
-    setEditingProduct(null);
-  }, []);
 
   const openNewProduct = () => {
     resetForm();

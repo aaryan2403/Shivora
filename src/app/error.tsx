@@ -20,12 +20,6 @@ export default function Error({
       <p className="text-ash text-sm mb-8 max-w-md">
         We apologize for the inconvenience. Please try again or return to the store.
       </p>
-      {/* Temporary diagnostic output — remove once the /admin crash is root-caused. */}
-      <div className="max-w-lg mb-8 text-left bg-black/30 border border-red-500/20 rounded-sm p-4 text-red-200 text-xs font-mono break-words whitespace-pre-wrap">
-        <p className="mb-1"><strong>message:</strong> {error?.message || "(no message)"}</p>
-        {error?.digest && <p className="mb-1"><strong>digest:</strong> {error.digest}</p>}
-        {error?.stack && <p className="mt-2 opacity-70">{error.stack}</p>}
-      </div>
       <div className="flex gap-4">
         <button
           onClick={reset}
