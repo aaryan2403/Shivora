@@ -18,7 +18,7 @@ export type Product = {
   color?: string;
 };
 
-export const ADMIN_EMAIL = "shivoraadmin@gmail.com";
+export const ADMIN_EMAIL = "aaryansmg24@gmail.com";
 export type CartItem = Product & { quantity: number };
 
 type User = {

@@ -55,7 +55,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-cinzel text-xl mb-2">Email</h3>
                 <p className="text-ash text-sm mb-2">General Inquiries & Support</p>
-                <a href="mailto:concierge@shivora.com" className="text-creme hover:text-ash transition-colors text-lg">concierge@shivora.com</a>
+                <a href="mailto:myshivora@gmail.com" className="text-creme hover:text-ash transition-colors text-lg">myshivora@gmail.com</a>
               </div>
             </div>
 
