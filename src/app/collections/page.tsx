@@ -127,7 +127,7 @@ function CollectionsContent() {
 
                 <div className="flex justify-between items-start gap-4">
                   <div>
-                    <span className="text-ash text-[10px] uppercase tracking-[0.3em] block mb-2">{product.collection} Collection</span>
+                    <span className="text-ash text-[10px] uppercase tracking-[0.3em] block mb-2">{product.category}</span>
                     <h3 className="font-serif text-xl group-hover:text-primary transition-colors duration-300">{product.name}</h3>
                   </div>
                   <span className="text-sm font-medium tracking-wider">{product.price}</span>

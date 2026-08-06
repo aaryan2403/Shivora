@@ -9,6 +9,7 @@ import { useProducts } from "@/lib/useProducts";
 import { useToast } from "@/hooks/useToast";
 import type { Product } from "@/context/ShopContext";
 import { useShop, ADMIN_EMAIL } from "@/context/ShopContext";
+import { useCollections } from "@/hooks/useCollections";
 import {
   ShieldAlert,
   Clock,
@@ -176,15 +177,13 @@ export default function AdminPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
-  const [collectionFilter, setCollectionFilter] = useState("All");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isPushing, setIsPushing] = useState(false);
 
   // Form state
   const [formName, setFormName] = useState("");
-  const [formCategory, setFormCategory] = useState("Rings");
-  const [formCollection, setFormCollection] = useState("Necklaces");
+  const [formCategory, setFormCategory] = useState("Necklaces");
   const [formPrice, setFormPrice] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formStock, setFormStock] = useState<number | "">("");
@@ -196,19 +195,18 @@ export default function AdminPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const heroFileInputRef = useRef<HTMLInputElement>(null);
-  const necklaceFileRef = useRef<HTMLInputElement>(null);
-  const braceletFileRef = useRef<HTMLInputElement>(null);
-  const earringFileRef = useRef<HTMLInputElement>(null);
+  const collectionFileRefs = useRef<Record<number, HTMLInputElement | null>>({});
 
   // Hero image state
   const [heroImageUrl, setHeroImageUrl] = useState<string | null>(null);
   const [heroUploading, setHeroUploading] = useState(false);
-  const [categoryImages, setCategoryImages] = useState({
-    necklaces: null as string | null,
-    bracelets: null as string | null,
-    earrings: null as string | null,
-  });
-  const [categoryUploading, setCategoryUploading] = useState<string | null>(null);
+
+  // Collections (dynamic "Shop by Collection" homepage tiles)
+  const { collections, loading: collectionsLoading, refetch: refetchCollections } = useCollections();
+  const [collectionUploadingId, setCollectionUploadingId] = useState<number | null>(null);
+  const [newCollectionName, setNewCollectionName] = useState("");
+  const [isAddingCollection, setIsAddingCollection] = useState(false);
+  const [creatingCollection, setCreatingCollection] = useState(false);
 
   useEffect(() => {
     async function fetchSettings() {
@@ -216,14 +214,8 @@ export default function AdminPage() {
         const res = await fetch("/api/hero", { cache: "no-store" });
         const data = await res.json();
         setHeroImageUrl(data.heroImageUrl ?? null);
-        setCategoryImages({
-          necklaces: data.categoryImages?.necklaces ?? null,
-          bracelets: data.categoryImages?.bracelets ?? null,
-          earrings: data.categoryImages?.earrings ?? null,
-        });
       } catch {
         setHeroImageUrl(null);
-        setCategoryImages({ necklaces: null, bracelets: null, earrings: null });
       }
     }
     fetchSettings();
@@ -253,17 +245,15 @@ export default function AdminPage() {
     return products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = categoryFilter === "All" || p.category === categoryFilter;
-      const matchesCollection = collectionFilter === "All" || p.collection === collectionFilter;
-      return matchesSearch && matchesCategory && matchesCollection;
+      return matchesSearch && matchesCategory;
     });
-  }, [products, searchQuery, categoryFilter, collectionFilter]);
+  }, [products, searchQuery, categoryFilter]);
 
   const totalStock = useMemo(() => products.reduce((sum, p) => sum + (p.stock || 0), 0), [products]);
 
   const resetForm = useCallback(() => {
     setFormName("");
-    setFormCategory("Rings");
-    setFormCollection("Necklaces");
+    setFormCategory("Necklaces");
     setFormPrice("");
     setFormDescription("");
     setFormStock("");
@@ -369,45 +359,76 @@ export default function AdminPage() {
     }
   };
 
-  const handleCategoryUpload = async (key: "necklaces" | "bracelets" | "earrings", files: FileList | null) => {
+  const handleAddCollection = async () => {
+    const name = newCollectionName.trim();
+    if (!name) return;
+
+    setCreatingCollection(true);
+    const toastId = addToast("Creating collection...", "loading", 0);
+    try {
+      const res = await fetch("/api/admin/collections", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create collection");
+
+      updateToast(toastId, `"${name}" added — it'll show up on the homepage now.`, "success");
+      setNewCollectionName("");
+      setIsAddingCollection(false);
+      await refetchCollections();
+    } catch (err: unknown) {
+      updateToast(toastId, err instanceof Error ? err.message : "Failed to create collection", "error");
+    } finally {
+      setCreatingCollection(false);
+    }
+  };
+
+  const handleCollectionImageUpload = async (id: number, files: FileList | null) => {
     if (!files || files.length === 0) return;
     const file = files[0];
 
-    setCategoryUploading(key);
-    const toastId = addToast(`Uploading ${key} image...`, "loading", 0);
+    setCollectionUploadingId(id);
+    const toastId = addToast("Uploading collection image...", "loading", 0);
 
-    const publicUrl = await uploadToStorage(file, "categories");
+    const publicUrl = await uploadToStorage(file, "collections");
     if (!publicUrl) {
-      updateToast(toastId, `Failed to upload ${key} image`, "error");
-      setCategoryUploading(null);
+      updateToast(toastId, "Failed to upload image", "error");
+      setCollectionUploadingId(null);
       return;
     }
 
-    const saved = await saveSetting(`category_${key}`, publicUrl);
-    if (!saved) {
-      updateToast(toastId, `Failed to save ${key} image`, "error");
-      setCategoryUploading(null);
-      return;
-    }
-
-    setCategoryImages((prev) => ({ ...prev, [key]: publicUrl }));
-    updateToast(toastId, `${key.charAt(0).toUpperCase() + key.slice(1)} image updated!`, "success");
-    setCategoryUploading(null);
-  };
-
-  const handleCategoryRemove = async (key: "necklaces" | "bracelets" | "earrings") => {
-    const toastId = addToast(`Removing ${key} image...`, "loading", 0);
-    const ok = await deleteSetting(`category_${key}`);
-    if (ok) {
-      setCategoryImages((prev) => ({ ...prev, [key]: null }));
-      updateToast(toastId, `${key.charAt(0).toUpperCase() + key.slice(1)} image removed`, "success");
-    } else {
-      updateToast(toastId, `Failed to remove ${key} image`, "error");
+    try {
+      const res = await fetch("/api/admin/collections", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, imageUrl: publicUrl }),
+      });
+      if (!res.ok) throw new Error("Failed to save image");
+      updateToast(toastId, "Collection image updated!", "success");
+      await refetchCollections();
+    } catch {
+      updateToast(toastId, "Failed to save collection image", "error");
+    } finally {
+      setCollectionUploadingId(null);
     }
   };
 
-  const categories = ["All", "Rings", "Necklaces", "Earrings", "Bracelets", "Headwear"];
-  const collections = ["All", "Necklaces", "Bracelets", "Earrings"];
+  const handleCollectionRemove = async (id: number, name: string) => {
+    if (!confirm(`Remove the "${name}" collection? This also removes its section from the homepage.`)) return;
+    const toastId = addToast("Removing collection...", "loading", 0);
+    try {
+      const res = await fetch(`/api/admin/collections?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to remove collection");
+      updateToast(toastId, "Collection removed", "success");
+      await refetchCollections();
+    } catch {
+      updateToast(toastId, "Failed to remove collection", "error");
+    }
+  };
+
+  const categories = ["All", "Necklaces", "Earrings", "Bracelets"];
 
   const openNewProduct = () => {
     resetForm();
@@ -418,7 +439,6 @@ export default function AdminPage() {
     setEditingProduct(product);
     setFormName(product.name);
     setFormCategory(product.category);
-    setFormCollection(product.collection || "Necklaces");
     setFormPrice(product.price);
     setFormDescription(product.description || "");
     setFormStock(product.stock ?? "");
@@ -494,7 +514,6 @@ export default function AdminPage() {
         id: editingProduct?.id,
         name: formName,
         category: formCategory,
-        collection: formCollection,
         price: formPrice,
         description: formDescription,
         stock: formStock === "" ? null : Number(formStock),
@@ -706,90 +725,112 @@ export default function AdminPage() {
           )}
         </section>
 
-        {/* ─── Category Images ─── */}
+        {/* ─── Collections ─── */}
         <section className="mb-10 border border-ash/10 bg-ash/5 p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Layers size={13} className="text-primary" />
-            <h3 className="text-[10px] uppercase tracking-[0.25em] text-primary">Homepage Categories</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Layers size={13} className="text-primary" />
+              <h3 className="text-[10px] uppercase tracking-[0.25em] text-primary">Collections</h3>
+            </div>
+            <button
+              onClick={() => setIsAddingCollection((v) => !v)}
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-ash/20 text-[10px] uppercase tracking-[0.15em] text-ash hover:text-creme hover:border-ash/40 transition-colors"
+            >
+              <Plus size={11} /> Add Collection
+            </button>
           </div>
           <p className="text-ash text-xs mb-4">
-            Customize the three category showcase images on the homepage.
+            Each collection here gets its own tile in the &quot;Shop by Collection&quot; section on the homepage, with its own image.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {([
-              { key: "necklaces" as const, label: "Necklaces", ref: necklaceFileRef },
-              { key: "bracelets" as const, label: "Bracelets", ref: braceletFileRef },
-              { key: "earrings" as const, label: "Earrings", ref: earringFileRef },
-            ]).map((cat) => {
-              const currentUrl = categoryImages[cat.key];
-              const isUploading = categoryUploading === cat.key;
-              return (
-                <div key={cat.key} className="border border-ash/10 bg-obsidian/20 p-4">
-                  <h4 className="text-xs uppercase tracking-[0.2em] text-creme mb-3">{cat.label}</h4>
-                  {currentUrl ? (
-                    <>
-                      <div className="relative w-full h-28 bg-obsidian/40 border border-ash/10 overflow-hidden rounded-sm mb-3">
-                        <Image src={currentUrl} alt={`${cat.label} preview`} fill className="object-cover" />
-                      </div>
-                      <div className="flex gap-2">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          ref={cat.ref}
-                          onChange={(e) => handleCategoryUpload(cat.key, e.target.files)}
-                          className="hidden"
-                        />
-                        <button
-                          onClick={() => cat.ref.current?.click()}
-                          disabled={isUploading}
-                          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-ash/20 text-[10px] uppercase tracking-[0.15em] text-ash hover:text-creme hover:border-ash/40 transition-colors disabled:opacity-50"
-                        >
-                          {isUploading ? <Loader2 size={10} className="animate-spin" /> : <Upload size={10} />}
-                          Change
-                        </button>
-                        <button
-                          onClick={() => handleCategoryRemove(cat.key)}
-                          disabled={isUploading}
-                          className="flex items-center justify-center gap-2 px-3 py-2 border border-red-500/20 text-[10px] uppercase tracking-[0.15em] text-red-300 hover:bg-red-500/10 transition-colors disabled:opacity-50"
-                        >
-                          <Trash2 size={10} />
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-full h-28 bg-obsidian/40 border border-dashed border-ash/20 flex items-center justify-center text-ash text-[10px] mb-3">
-                        Default image
-                      </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        ref={cat.ref}
-                        onChange={(e) => handleCategoryUpload(cat.key, e.target.files)}
-                        className="hidden"
-                      />
+          {isAddingCollection && (
+            <div className="flex gap-2 mb-4 p-3 border border-ash/10 bg-obsidian/20">
+              <input
+                type="text"
+                value={newCollectionName}
+                onChange={(e) => setNewCollectionName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddCollection()}
+                placeholder="Collection name, e.g. Anklets"
+                autoFocus
+                className="flex-1 bg-obsidian/40 border border-ash/20 px-3 py-2 text-sm text-creme outline-none focus:border-primary/50 transition-colors placeholder:text-ash/30"
+              />
+              <button
+                onClick={handleAddCollection}
+                disabled={creatingCollection || !newCollectionName.trim()}
+                className="px-4 py-2 bg-creme text-obsidian text-[10px] uppercase tracking-[0.15em] font-semibold hover:bg-primary transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                {creatingCollection ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                Create
+              </button>
+              <button
+                onClick={() => { setIsAddingCollection(false); setNewCollectionName(""); }}
+                className="px-3 py-2 border border-ash/20 text-ash hover:text-creme transition-colors"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          )}
+
+          {collectionsLoading ? (
+            <div className="flex items-center gap-2 text-ash text-xs py-6">
+              <Loader2 size={14} className="animate-spin" /> Loading collections...
+            </div>
+          ) : collections.length === 0 ? (
+            <div className="text-ash text-xs py-6 text-center border border-dashed border-ash/20">
+              No collections yet — add one above to create its homepage section.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {collections.map((col) => {
+                const isUploading = collectionUploadingId === col.id;
+                return (
+                  <div key={col.id} className="border border-ash/10 bg-obsidian/20 p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-xs uppercase tracking-[0.2em] text-creme">{col.name}</h4>
                       <button
-                        onClick={() => cat.ref.current?.click()}
-                        disabled={isUploading}
-                        className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-creme text-obsidian text-[10px] uppercase tracking-[0.15em] font-semibold hover:bg-primary transition-colors disabled:opacity-50"
+                        onClick={() => handleCollectionRemove(col.id, col.name)}
+                        className="text-ash/60 hover:text-red-400 transition-colors"
+                        aria-label={`Remove ${col.name}`}
                       >
-                        {isUploading ? <Loader2 size={10} className="animate-spin" /> : <Upload size={10} />}
-                        Upload Image
+                        <Trash2 size={12} />
                       </button>
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                    </div>
+                    {col.image_url ? (
+                      <div className="relative w-full h-28 bg-obsidian/40 border border-ash/10 overflow-hidden rounded-sm mb-3">
+                        <Image src={col.image_url} alt={`${col.name} preview`} fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-full h-28 bg-obsidian/40 border border-dashed border-ash/20 flex items-center justify-center text-ash text-[10px] mb-3">
+                        No image set
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={(el) => { collectionFileRefs.current[col.id] = el; }}
+                      onChange={(e) => handleCollectionImageUpload(col.id, e.target.files)}
+                      className="hidden"
+                    />
+                    <button
+                      onClick={() => collectionFileRefs.current[col.id]?.click()}
+                      disabled={isUploading}
+                      className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-ash/20 text-[10px] uppercase tracking-[0.15em] text-ash hover:text-creme hover:border-ash/40 transition-colors disabled:opacity-50"
+                    >
+                      {isUploading ? <Loader2 size={10} className="animate-spin" /> : <Upload size={10} />}
+                      {col.image_url ? "Change Image" : "Upload Image"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </section>
 
         {/* ─── Stats ─── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           <StatCard icon={Package} label="Total Products" value={products.length} color="bg-primary" />
           <StatCard icon={Box} label="Total Stock" value={totalStock} color="bg-blue-500" />
-          <StatCard icon={Layers} label="Collections" value={3} color="bg-emerald-500" />
+          <StatCard icon={Layers} label="Collections" value={collections.length} color="bg-emerald-500" />
         </div>
 
         {/* ─── Toolbar ─── */}
@@ -811,15 +852,6 @@ export default function AdminPage() {
               className="bg-obsidian/40 border border-ash/20 px-4 py-2.5 text-sm text-creme outline-none focus:border-primary/50 transition-colors"
             >
               {categories.map((c) => (
-                <option key={c} value={c} className="bg-obsidian">{c}</option>
-              ))}
-            </select>
-            <select
-              value={collectionFilter}
-              onChange={(e) => setCollectionFilter(e.target.value)}
-              className="bg-obsidian/40 border border-ash/20 px-4 py-2.5 text-sm text-creme outline-none focus:border-primary/50 transition-colors"
-            >
-              {collections.map((c) => (
                 <option key={c} value={c} className="bg-obsidian">{c}</option>
               ))}
             </select>
@@ -916,7 +948,6 @@ export default function AdminPage() {
                   <div className="p-4">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div>
-                        <div className="text-[9px] uppercase tracking-[0.3em] text-primary mb-1">{product.collection}</div>
                         <h3 className="font-serif text-base leading-tight">{product.name}</h3>
                       </div>
                     </div>
@@ -991,31 +1022,17 @@ export default function AdminPage() {
                         className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm text-creme outline-none focus:border-primary/50 transition-colors placeholder:text-ash/30"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-[10px] uppercase tracking-[0.2em] text-ash mb-1.5 block">Category *</label>
-                        <select
-                          value={formCategory}
-                          onChange={(e) => setFormCategory(e.target.value)}
-                          className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm text-creme outline-none focus:border-primary/50 transition-colors"
-                        >
-                          {["Rings", "Necklaces", "Earrings", "Bracelets", "Headwear"].map((c) => (
-                            <option key={c} value={c} className="bg-obsidian">{c}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-[10px] uppercase tracking-[0.2em] text-ash mb-1.5 block">Collection *</label>
-                        <select
-                          value={formCollection}
-                          onChange={(e) => setFormCollection(e.target.value)}
-                          className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm text-creme outline-none focus:border-primary/50 transition-colors"
-                        >
-                          {["Necklaces", "Bracelets", "Earrings"].map((c) => (
-                            <option key={c} value={c} className="bg-obsidian">{c}</option>
-                          ))}
-                        </select>
-                      </div>
+                    <div>
+                      <label className="text-[10px] uppercase tracking-[0.2em] text-ash mb-1.5 block">Category *</label>
+                      <select
+                        value={formCategory}
+                        onChange={(e) => setFormCategory(e.target.value)}
+                        className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm text-creme outline-none focus:border-primary/50 transition-colors"
+                      >
+                        {["Necklaces", "Earrings", "Bracelets"].map((c) => (
+                          <option key={c} value={c} className="bg-obsidian">{c}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </section>

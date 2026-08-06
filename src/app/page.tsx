@@ -8,20 +8,18 @@ import Link from "next/link";
 import { useShop } from "../context/ShopContext";
 import { useProducts } from "@/lib/useProducts";
 import { useHero } from "@/hooks/useHero";
+import { useCollections } from "@/hooks/useCollections";
+
+const FALLBACK_COLLECTION_IMG = "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop";
 
 export default function Home() {
   const introRef = useRef<HTMLDivElement>(null);
-  
+
   const { openProduct } = useShop();
 
   const { products, loading } = useProducts();
-  const { heroImageUrl, categoryImages } = useHero();
-
-  const categoryData = [
-    { name: "Necklaces", key: "necklaces" as const, defaultImg: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop", style: "grayscale contrast-125" },
-    { name: "Bracelets", key: "bracelets" as const, defaultImg: "https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?q=80&w=800&auto=format&fit=crop", style: "sepia-[.2] hue-rotate-180 brightness-75" },
-    { name: "Earrings", key: "earrings" as const, defaultImg: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop", style: "" }
-  ];
+  const { heroImageUrl } = useHero();
+  const { collections } = useCollections();
 
   // Track scroll progress of the intro container to trigger navbar
   const { scrollYProgress } = useScroll({
@@ -106,6 +104,7 @@ export default function Home() {
       </section>
 
       {/* CATEGORY SHOWCASE */}
+      {collections.length > 0 && (
       <section className="relative bg-obsidian text-creme py-24 px-6 md:px-12 lg:px-24 border-t border-ash/10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -116,27 +115,27 @@ export default function Home() {
               Discover our signature lines, each crafted with distinct materials and unique philosophies.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {categoryData.map(cat => (
+            {collections.map(col => (
               <motion.div
                 whileHover={{ scale: 0.98 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                key={cat.name}
+                key={col.id}
                 className="group cursor-pointer relative h-[60vh] overflow-hidden bg-ash/10 rounded-sm"
                 onClick={() => {
                   document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
-                  setActiveFilter(cat.name);
+                  setActiveFilter(col.name);
                 }}
               >
                 <Image
-                  src={categoryImages[cat.key] ?? cat.defaultImg}
-                  alt={`${cat.name} Collection`}
+                  src={col.image_url ?? FALLBACK_COLLECTION_IMG}
+                  alt={`${col.name} Collection`}
                   fill
-                  className={`object-cover transition-transform duration-1000 group-hover:scale-105 ${cat.style}`}
+                  className="object-cover transition-transform duration-1000 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col justify-end p-8 text-white">
-                  <h3 className="font-serif text-2xl md:text-3xl mb-2 transition-colors">{cat.name}</h3>
+                  <h3 className="font-serif text-2xl md:text-3xl mb-2 transition-colors">{col.name}</h3>
                   <div className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-white/75 group-hover:text-white transition-colors">
                     <span>Explore Collection</span>
                     <ArrowDown size={12} className="-rotate-90 group-hover:translate-x-2 transition-transform" />
@@ -147,6 +146,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* NORMAL SHOP SECTION */}
       <section id="shop" className="relative bg-obsidian text-creme min-h-screen py-24 px-6 md:px-12 lg:px-24 z-10 border-t border-ash/10">
@@ -229,7 +229,7 @@ export default function Home() {
                   </div>
                   <div className="flex justify-between items-start gap-4">
                     <div>
-                      <span className="text-ash text-[10px] uppercase tracking-[0.3em] block mb-2">{product.collection}</span>
+                      <span className="text-ash text-[10px] uppercase tracking-[0.3em] block mb-2">{product.category}</span>
                       <h3 className="font-serif text-xl group-hover:text-primary transition-colors duration-300">{product.name}</h3>
                     </div>
                     <span className="text-sm font-medium tracking-wider whitespace-nowrap pt-0.5">{product.price}</span>
