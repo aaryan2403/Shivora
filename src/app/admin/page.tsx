@@ -183,7 +183,7 @@ export default function AdminPage() {
 
   // Form state
   const [formName, setFormName] = useState("");
-  const [formCategory, setFormCategory] = useState("Necklaces");
+  const [formCategory, setFormCategory] = useState("");
   const [formPrice, setFormPrice] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formStock, setFormStock] = useState<number | "">("");
@@ -253,7 +253,7 @@ export default function AdminPage() {
 
   const resetForm = useCallback(() => {
     setFormName("");
-    setFormCategory("Necklaces");
+    setFormCategory("");
     setFormPrice("");
     setFormDescription("");
     setFormStock("");
@@ -438,7 +438,7 @@ export default function AdminPage() {
   const openEditProduct = (product: Product) => {
     setEditingProduct(product);
     setFormName(product.name);
-    setFormCategory(product.category);
+    setFormCollection(product.collection || "");
     setFormPrice(product.price);
     setFormDescription(product.description || "");
     setFormStock(product.stock ?? "");
@@ -513,7 +513,8 @@ export default function AdminPage() {
       const payload = {
         id: editingProduct?.id,
         name: formName,
-        category: formCategory,
+       category: editingProduct?.category || "Jewelry",
+collection: formCollection || null,
         price: formPrice,
         description: formDescription,
         stock: formStock === "" ? null : Number(formStock),
@@ -1022,18 +1023,31 @@ export default function AdminPage() {
                         className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm text-creme outline-none focus:border-primary/50 transition-colors placeholder:text-ash/30"
                       />
                     </div>
-                    <div>
-                      <label className="text-[10px] uppercase tracking-[0.2em] text-ash mb-1.5 block">Category *</label>
-                      <select
-                        value={formCategory}
-                        onChange={(e) => setFormCategory(e.target.value)}
-                        className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm text-creme outline-none focus:border-primary/50 transition-colors"
-                      >
-                        {["Necklaces", "Earrings", "Bracelets"].map((c) => (
-                          <option key={c} value={c} className="bg-obsidian">{c}</option>
-                        ))}
-                      </select>
-                    </div>
+                   <div>
+  <label className="text-[10px] uppercase tracking-[0.2em] text-ash mb-1.5 block">
+    Collection
+  </label>
+
+  <select
+    value={formCollection}
+    onChange={(e) => setFormCollection(e.target.value)}
+    className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm text-creme outline-none focus:border-primary/50 transition-colors"
+  >
+    <option value="" className="bg-obsidian">
+      No Collection
+    </option>
+
+    {collections.map((collection) => (
+      <option
+        key={collection.id}
+        value={collection.name}
+        className="bg-obsidian"
+      >
+        {collection.name}
+      </option>
+    ))}
+  </select>
+</div>
                   </div>
                 </section>
 
