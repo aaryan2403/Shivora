@@ -39,6 +39,7 @@ type DbProduct = {
   name: string;
   category: string;
   collection: string | null;
+  material: string | null;
   price: string;
   image: string;
   images: string[] | null;
@@ -49,12 +50,13 @@ type DbProduct = {
 };
 
 function mapProduct(row: DbProduct): Product {
-  return {
-    id: row.id,
-    name: row.name,
-    category: row.category,
-    collection: row.collection ?? undefined,
-    price: row.price,
+ return {
+  id: row.id,
+  name: row.name,
+  category: row.category,
+  collection: row.collection ?? undefined,
+  material: row.material ?? undefined,
+  price: row.price,
     image: row.image,
     images: row.images ?? undefined,
     description: row.description ?? undefined,
@@ -74,7 +76,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("products")
-    .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock")
+ .select("id,name,category,collection,material,price,image,images,description,is_high_jewelry,stock")
     .order("id", { ascending: true });
 
   if (error) {
@@ -97,6 +99,7 @@ type CreateProductBody = {
   name: string;
   category: string;
   collection?: string;
+  material?: string;
   price: string;
   image: string;
   images?: string[];
@@ -123,11 +126,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const insertRow: Record<string, unknown> = {
-    name: body.name,
-    category: body.category,
-    collection: body.collection ?? null,
-    price: body.price,
+ const insertRow: Record<string, unknown> = {
+  name: body.name,
+  category: body.category,
+  collection: body.collection ?? null,
+  material: body.material ?? null,
+  price: body.price,
     image: body.image,
     images: body.images ?? null,
     description: body.description ?? null,
@@ -140,7 +144,7 @@ export async function POST(request: NextRequest) {
   let result = await supabase
     .from("products")
     .insert(insertRow)
-    .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock,color")
+   .select("id,name,category,collection,material,price,image,images,description,is_high_jewelry,stock,color")
     .single();
 
   // If color column doesn't exist, retry without it
@@ -149,7 +153,7 @@ export async function POST(request: NextRequest) {
     result = await supabase
       .from("products")
       .insert(insertRow)
-      .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock")
+.select("id,name,category,collection,material,price,image,images,description,is_high_jewelry,stock")
       .single();
   }
 
@@ -180,6 +184,7 @@ export async function PUT(request: NextRequest) {
   if (body.name !== undefined) updateRow.name = body.name;
   if (body.category !== undefined) updateRow.category = body.category;
   if (body.collection !== undefined) updateRow.collection = body.collection;
+  if (body.material !== undefined) updateRow.material = body.material;
   if (body.price !== undefined) updateRow.price = body.price;
   if (body.image !== undefined) updateRow.image = body.image;
   if (body.images !== undefined) updateRow.images = body.images;
@@ -192,7 +197,7 @@ export async function PUT(request: NextRequest) {
     .from("products")
     .update(updateRow)
     .eq("id", body.id)
-    .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock,color")
+.select("id,name,category,collection,material,price,image,images,description,is_high_jewelry,stock")
     .single();
 
   // If color column doesn't exist, retry without it
@@ -202,7 +207,7 @@ export async function PUT(request: NextRequest) {
       .from("products")
       .update(updateRow)
       .eq("id", body.id)
-      .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock")
+     .select("id,name,category,collection,material,price,image,images,description,is_high_jewelry,stock")
       .single();
   }
 
