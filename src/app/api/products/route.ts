@@ -10,7 +10,8 @@ type DbProduct = {
   name: string;
   category: string;
   collection: string | null;
-  price: string;
+material: string | null;
+price: string;
   image: string;
   images: string[] | null;
   description: string | null;
@@ -24,7 +25,8 @@ function mapProduct(row: DbProduct): Product {
     name: row.name,
     category: row.category,
     collection: row.collection ?? undefined,
-    price: row.price,
+material: row.material ?? undefined,
+price: row.price,
     image: row.image,
     images: row.images ?? undefined,
     description: row.description ?? undefined,
@@ -38,7 +40,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("products")
-    .select("id,name,category,collection,price,image,images,description,is_high_jewelry,stock")
+   .select("id,name,category,collection,material,price,image,images,description,is_high_jewelry,stock")
     .order("id", { ascending: true });
 
   if (error) {
