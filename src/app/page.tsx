@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowDown, ShoppingBag, Truck, ShieldCheck, Gem, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useShop } from "../context/ShopContext";
 import { useProducts } from "@/lib/useProducts";
 import { useHero } from "@/hooks/useHero";
@@ -13,6 +14,7 @@ import { useCollections } from "@/hooks/useCollections";
 const FALLBACK_COLLECTION_IMG = "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop";
 
 export default function Home() {
+ const router = useRouter();
   const introRef = useRef<HTMLDivElement>(null);
 
   const { openProduct } = useShop();
@@ -30,12 +32,8 @@ export default function Home() {
   // Intro Content Animations - Fade out as we scroll down
   const storeIntroOpacity = useTransform(scrollYProgress, [0.7, 0.9], [1, 0]);
   const storeIntroScale = useTransform(scrollYProgress, [0.7, 0.9], [1, 0.9]);
-
-  const [activeFilter, setActiveFilter] = useState("All");
   
-  const filteredProducts = activeFilter === "All" 
-    ? products 
-    : products.filter(p => p.collection === activeFilter);
+const filteredProducts = products;
 
   return (
     <main className="relative selection:bg-ash selection:text-creme bg-obsidian">
@@ -124,9 +122,8 @@ export default function Home() {
                 key={col.id}
                 className="group cursor-pointer relative h-[60vh] overflow-hidden bg-ash/10 rounded-sm"
                 onClick={() => {
-                  document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
-                  setActiveFilter(col.name);
-                }}
+  router.push(`/collections?category=${encodeURIComponent(col.name)}`);
+}}
               >
                 <Image
                   src={col.image_url ?? FALLBACK_COLLECTION_IMG}
@@ -161,17 +158,7 @@ export default function Home() {
               </p>
             </div>
             
-            <div className="flex gap-6 text-xs uppercase tracking-[0.2em] overflow-x-auto w-full md:w-auto pb-4 md:pb-0">
-              {["All", "Necklaces", "Bracelets", "Earrings"].map((filter) => (
-                <button 
-                  key={filter}
-                  onClick={() => setActiveFilter(filter)}
-                  className={`whitespace-nowrap transition-colors duration-300 cursor-pointer ${activeFilter === filter ? "text-creme border-b border-creme pb-1" : "text-ash hover:text-creme pb-1"}`}
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
+            
           </div>
 
           <motion.div 
