@@ -183,7 +183,7 @@ export default function AdminPage() {
 
   // Form state
   const [formName, setFormName] = useState("");
-  const [formCategory, setFormCategory] = useState("");
+  const [formCollection, setFormCollection] = useState("");
   const [formPrice, setFormPrice] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formStock, setFormStock] = useState<number | "">("");
@@ -253,7 +253,7 @@ export default function AdminPage() {
 
   const resetForm = useCallback(() => {
     setFormName("");
-    setFormCategory("");
+    setFormCollection("");
     setFormPrice("");
     setFormDescription("");
     setFormStock("");
