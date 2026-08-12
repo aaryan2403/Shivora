@@ -184,6 +184,7 @@ export default function AdminPage() {
   // Form state
   const [formName, setFormName] = useState("");
   const [formCollection, setFormCollection] = useState("");
+  const [formMaterial, setFormMaterial] = useState("");
   const [formPrice, setFormPrice] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formStock, setFormStock] = useState<number | "">("");
@@ -254,6 +255,7 @@ export default function AdminPage() {
   const resetForm = useCallback(() => {
     setFormName("");
     setFormCollection("");
+    setFormMaterial("");
     setFormPrice("");
     setFormDescription("");
     setFormStock("");
@@ -439,6 +441,7 @@ export default function AdminPage() {
     setEditingProduct(product);
     setFormName(product.name);
     setFormCollection(product.collection || "");
+    setFormMaterial(product.material || "");
     setFormPrice(product.price);
     setFormDescription(product.description || "");
     setFormStock(product.stock ?? "");
@@ -510,12 +513,13 @@ export default function AdminPage() {
     const toastId = addToast(editingProduct ? "Updating product..." : "Creating product...", "loading", 0);
 
     try {
-      const payload = {
-        id: editingProduct?.id,
-        name: formName,
-       category: editingProduct?.category || "Jewelry",
-collection: formCollection || null,
-        price: formPrice,
+     const payload = {
+  id: editingProduct?.id,
+  name: formName,
+  category: editingProduct?.category || "Jewelry",
+  collection: formCollection || null,
+  material: formMaterial || null,
+  price: formPrice,
         description: formDescription,
         stock: formStock === "" ? null : Number(formStock),
         color: formColor || null,
@@ -1048,6 +1052,21 @@ collection: formCollection || null,
     ))}
   </select>
 </div>
+                    <div>
+      <label className="text-[10px] uppercase tracking-[0.2em] text-ash mb-1.5 block">
+        Material
+      </label>
+
+      <input
+        type="text"
+        value={formMaterial}
+        onChange={(e) => setFormMaterial(e.target.value)}
+        placeholder="e.g., 18K Gold, Sterling Silver, Stainless Steel"
+        className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm text-creme outline-none focus:border-primary/50 transition-colors placeholder:text-ash/30"
+      />
+    </div>
+  </div>
+</section>
                   </div>
                 </section>
 
