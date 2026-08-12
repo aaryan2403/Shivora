@@ -8,12 +8,14 @@ import { ShoppingBag, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useShop } from "../../context/ShopContext";
 import { useProducts } from "@/lib/useProducts";
+import { useCollections } from "@/hooks/useCollections";
 
 function CollectionsContent() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") || "All";
 
   const { products, loading } = useProducts();
+  const { collections, loading: collectionsLoading } = useCollections();
   
   const [activeFilter, setActiveFilter] = useState(initialCategory);
   const { addToCart, toggleWishlist, wishlist, setIsCartOpen, openProduct } = useShop();
@@ -28,13 +30,12 @@ function CollectionsContent() {
   // Filter products based on active filter
   // "All" shows everything
   // Otherwise, match against 'category' (e.g. Rings, Necklaces) OR 'collection' (e.g. Obsidian, Ash)
-  const filteredProducts = activeFilter === "All"
+ const filteredProducts =
+  activeFilter === "All"
     ? products
-    : products.filter(p => 
-        p.category === activeFilter || p.collection === activeFilter
-      );
-
-  const filters = ["All", "Rings", "Necklaces", "Earrings", "Bracelets"];
+    : products.filter((p) => p.collection === activeFilter);
+  
+const filters = ["All", ...collections.map((collection) => collection.name)];
 
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
