@@ -1067,8 +1067,7 @@ export default function AdminPage() {
     </div>
   </div>
 </section>
-                  </div>
-                </section>
+                
 
                 {/* Pricing & Stock */}
                 <section>
