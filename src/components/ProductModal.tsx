@@ -218,7 +218,9 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                   </div>
                   <div>
                     <span className="block text-ash text-xs uppercase tracking-widest mb-1">Material</span>
-                    <span className="font-semibold text-obsidian">{product.collection === 'Necklaces' ? 'Dark Rhodium / Obsidian' : product.collection === 'Bracelets' ? 'Brushed Gunmetal' : '18k Gold / Pearl'}</span>
+                    <span className="font-semibold text-obsidian">
+  {product.material || "Material not specified"}
+</span>
                   </div>
                   <div>
                     <span className="block text-ash text-xs uppercase tracking-widest mb-1">Availability</span>
