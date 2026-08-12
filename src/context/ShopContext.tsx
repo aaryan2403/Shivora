@@ -4,12 +4,13 @@ import React, { createContext, useContext, useState, useEffect, useMemo, useCall
 import { createClient } from '@/lib/supabase/client';
 
 // Types
-export type Product = {
-  id: number;
-  name: string;
-  category: string;
-  collection?: string;
-  price: string;
+export type Product = { 
+  id: number; 
+  name: string; 
+  category: string; 
+  collection?: string; 
+  material?: string; 
+  price: string; 
   image: string;
   images?: string[];
   description?: string;
