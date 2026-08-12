@@ -189,7 +189,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
               </div>
 
               {/* Right Side: Product Details */}
-              <div className="w-full md:w-1/2 h-full p-8 md:p-12 overflow-y-auto custom-scrollbar flex flex-col bg-creme text-obsidian">
+             <div className="w-full md:w-1/2 h-full p-8 md:p-12 overflow-y-auto custom-scrollbar flex flex-col bg-white text-obsidian">
                 <div className="mb-2">
                   <span className="text-ash text-xs uppercase tracking-[0.3em] font-semibold">
                     {product.collection || "Signature"} Collection
