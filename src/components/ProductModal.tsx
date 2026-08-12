@@ -89,7 +89,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-creme w-full max-w-6xl max-h-[90vh] md:h-[80vh] rounded-sm overflow-hidden flex flex-col md:flex-row pointer-events-auto relative shadow-2xl"
+              className="bg-white w-full max-w-6xl max-h-[90vh] md:h-[80vh] rounded-sm overflow-hidden flex flex-col md:flex-row pointer-events-auto relative shadow-2xl"
             >
               {/* Close Button */}
               <button
