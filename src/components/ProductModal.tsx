@@ -179,7 +179,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                         type="button"
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex((prev) => (prev + 1) % images.length); }}
                         aria-label="Next image"
-                        className="p-1.5 bg-creme/80 hover:bg-creme text-obsidian rounded-full shadow-sm transition-colors backdrop-blur-sm"
+                        className="p-1.5 bg-creme/80 hover:bg-creme text-[#5C2E0B] rounded-full shadow-sm transition-colors backdrop-blur-sm"
                       >
                         <ChevronRight size={16} />
                       </button>
@@ -189,7 +189,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
               </div>
 
               {/* Right Side: Product Details */}
-             <div className="w-full md:w-1/2 h-full p-8 md:p-12 overflow-y-auto custom-scrollbar flex flex-col bg-white text-obsidian">
+             <div className="w-full md:w-1/2 h-full p-8 md:p-12 overflow-y-auto custom-scrollbar flex flex-col bg-white text-[#5C2E0B]">
                 <div className="mb-2">
                   <span className="text-ash text-xs uppercase tracking-[0.3em] font-semibold">
                     {product.collection || "Signature"} Collection
@@ -201,10 +201,10 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                   )}
                 </div>
 
-                <h2 className="font-serif text-3xl md:text-5xl mb-4 text-obsidian">{product.name}</h2>
+                <h2 className="font-serif text-3xl md:text-5xl mb-4 text-black">{product.name}</h2>
                 <p className="text-2xl font-light tracking-wide text-ash mb-8">{product.price}</p>
 
-                <div className="prose prose-sm md:prose-base text-obsidian/80 font-medium mb-12">
+                <div className="prose prose-sm md:prose-base text-[#5A3215] font-medium mb-12">
                   <p className="leading-relaxed">
                     {product.description || "An exquisite piece crafted with uncompromising attention to detail, embodying the signature aesthetic of our house."}
                   </p>
@@ -214,21 +214,21 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                 <div className="border-t border-b border-ash/20 py-6 mb-12 grid grid-cols-2 gap-y-4 text-sm">
                   <div>
                     <span className="block text-ash text-xs uppercase tracking-widest mb-1">Category</span>
-                    <span className="font-semibold text-obsidian">{product.category}</span>
+                    <span className="font-semibold text-[#5A3215]">{product.category}</span>
                   </div>
                   <div>
                     <span className="block text-ash text-xs uppercase tracking-widest mb-1">Material</span>
-                    <span className="font-semibold text-obsidian">
+                    <span className="font-semibold text-[#5A3215]">
   {product.material || "Material not specified"}
 </span>
                   </div>
                   <div>
                     <span className="block text-ash text-xs uppercase tracking-widest mb-1">Availability</span>
-                    <span className="font-semibold text-obsidian">Made to Order</span>
+                    <span className="font-semibold text-[#5A3215]">Made to Order</span>
                   </div>
                   <div>
                     <span className="block text-ash text-xs uppercase tracking-widest mb-1">Shipping</span>
-                    <span className="font-semibold text-obsidian">Complimentary Global</span>
+                    <span className="font-semibold text-[#5A3215]">Complimentary Global</span>
                   </div>
                 </div>
 
@@ -245,7 +245,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                     className={`w-full py-4 border tracking-[0.2em] uppercase text-xs font-bold cursor-pointer transition-all duration-300 flex justify-center items-center gap-3 ${
                       isWishlisted 
                         ? 'border-primary text-primary bg-primary/5' 
-                        : 'border-ash/40 text-obsidian hover:border-primary hover:text-primary'
+                        : 'border-ash/40 text-[#5A3215] hover:border-primary hover:text-primary'
                     }`}
                   >
                     <Heart size={16} className={isWishlisted ? "fill-primary" : ""} /> 
