@@ -251,7 +251,55 @@ const applyTheme = useCallback((id: string) => {
     [activeThemeId, previewThemeId, activeTheme, applyTheme, confirmPreview, cancelPreview]
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+ if (!isHydrated) {
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center px-6"
+      style={{
+        background:
+          "linear-gradient(180deg, #F8F1E7 0%, #F3E6D6 100%)",
+      }}
+    >
+      <div className="flex flex-col items-center text-center">
+
+        <div
+          className="mb-5 text-3xl animate-pulse"
+          style={{ color: "#C89B5B" }}
+        >
+          ✦
+        </div>
+
+        <h1
+          className="font-serif text-4xl md:text-5xl tracking-[0.28em]"
+          style={{ color: "#5A3215" }}
+        >
+          SHIVORA
+        </h1>
+
+        <p
+          className="mt-3 text-[10px] md:text-xs uppercase tracking-[0.35em]"
+          style={{ color: "#8A6242" }}
+        >
+          Grace in Every Detail
+        </p>
+
+        <div className="mt-8 w-40 h-[2px] overflow-hidden bg-[#DCC8B3]">
+          <div
+            className="h-full w-1/2 shivora-loading-bar"
+            style={{ backgroundColor: "#C89B5B" }}
+          />
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+return (
+  <ThemeContext.Provider value={value}>
+    {children}
+  </ThemeContext.Provider>
+);
 }
 
 export function useTheme() {
