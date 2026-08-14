@@ -50,7 +50,7 @@ const filters = ["All", ...collections.map((collection) => collection.name)];
         </div>
 
         {/* Filter Bar */}
-        <div className="flex flex-wrap justify-center gap-4 mb-16 sticky top-24 z-40 py-4 bg-obsidian/95 backdrop-blur-sm border-y border-ash/10">
+       <div className="flex flex-wrap justify-center gap-4 mb-16 py-4 bg-obsidian/95 backdrop-blur-sm border-y border-ash/10">
            {filters.map((filter) => (
             <button
               key={filter}
