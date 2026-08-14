@@ -9,13 +9,14 @@ import { useShop } from "../../context/ShopContext";
 
 export default function CheckoutPage() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    address: "",
-    city: "",
-    zipCode: "",
-  });
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  address: "",
+  city: "",
+  zipCode: "",
+});
 
   const { cart } = useShop();
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -109,10 +110,30 @@ export default function CheckoutPage() {
                 <label htmlFor="checkout-last-name" className="text-xs uppercase tracking-[0.2em] text-ash">Last Name</label>
                 <input id="checkout-last-name" required type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
               </div>
-              <div className="flex flex-col gap-2 md:col-span-2">
-                <label htmlFor="checkout-email" className="text-xs uppercase tracking-[0.2em] text-ash">Email Address</label>
-                <input id="checkout-email" required type="email" name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
-              </div>
+<div className="flex flex-col gap-2 md:col-span-2">
+  <label htmlFor="checkout-email" className="text-xs uppercase tracking-[0.2em] text-ash">Email Address</label>
+  <input id="checkout-email" required type="email" name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium" />
+</div>
+
+<div className="flex flex-col gap-2 md:col-span-2">
+  <label
+    htmlFor="checkout-phone"
+    className="text-xs uppercase tracking-[0.2em] text-ash"
+  >
+    Phone Number
+  </label>
+
+  <input
+    id="checkout-phone"
+    required
+    type="tel"
+    name="phone"
+    value={formData.phone}
+    onChange={handleChange}
+    placeholder="+1 416 555 1234"
+    className="bg-transparent border-b border-ash/20 pb-2 outline-none focus:border-primary transition-colors duration-300 font-medium"
+  />
+</div>
             </div>
           </section>
 
