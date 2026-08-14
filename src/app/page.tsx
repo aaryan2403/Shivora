@@ -83,7 +83,7 @@ const filteredProducts = products;
 
       {/* VALUE / TRUST STRIP */}
       <section className="relative bg-obsidian text-creme border-t border-ash/10">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-ash/10 border-x border-ash/10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 divide-x divide-ash/10 border-x border-ash/10">
           {[
            { icon: Truck, title: "Complimentary Shipping", desc: "On orders over $75" },
             { icon: Gem, title: "Ethically Sourced", desc: "Conflict-free materials" },
