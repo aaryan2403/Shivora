@@ -50,7 +50,6 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <ShopProvider>
-            <AnnouncementBar />
             <Navbar />
             <NavbarSpacer />
             <SearchOverlay />
