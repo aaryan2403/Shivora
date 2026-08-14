@@ -85,15 +85,16 @@ const filters = ["All", ...collections.map((collection) => collection.name)];
 
             {filteredProducts.map((product) => (
               <motion.div
-                layout
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                whileHover={{ y: -8 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                key={product.id}
-                className="group flex flex-col cursor-pointer"
-              >
+  layout
+  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+  animate={{ opacity: 1, scale: 1, y: 0 }}
+  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+  whileHover={{ y: -8 }}
+  transition={{ duration: 0.4, ease: "easeOut" }}
+  key={product.id}
+  className="group flex flex-col cursor-pointer"
+  onClick={() => openProduct(product)}
+>
                 <div className="relative aspect-[4/5] w-full overflow-hidden bg-ash/10 mb-6 rounded-sm shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)] group-hover:shadow-[0_24px_60px_-24px_rgba(0,0,0,0.55)] transition-shadow duration-500">
                   <Image
                     src={product.image}
@@ -108,14 +109,21 @@ const filters = ["All", ...collections.map((collection) => collection.name)];
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center gap-3">
                     <button
-                      onClick={() => { addToCart(product); setIsCartOpen(true); }}
+                      onClick={(e) => {
+  e.stopPropagation();
+  addToCart(product);
+  setIsCartOpen(true);
+}}
                       className="bg-creme text-obsidian px-8 py-3 rounded-full flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 cursor-pointer hover:bg-primary hover:text-obsidian hover:scale-105 shadow-lg"
                     >
                       <ShoppingBag size={16} />
                       <span className="text-xs uppercase tracking-[0.2em] font-semibold">Add to Cart</span>
                     </button>
                     <button
-                      onClick={() => toggleWishlist(product)}
+                      onClick={(e) => {
+  e.stopPropagation();
+  toggleWishlist(product);
+}}
                       className="bg-white/15 backdrop-blur-md text-white border border-white/25 px-8 py-3 rounded-full flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75 cursor-pointer hover:bg-white/25 hover:scale-105"
                     >
                       <Heart size={16} className={wishlist.find(w => w.id === product.id) ? "fill-creme" : ""} />
