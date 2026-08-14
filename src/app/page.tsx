@@ -85,8 +85,7 @@ const filteredProducts = products;
       <section className="relative bg-obsidian text-creme border-t border-ash/10">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-ash/10 border-x border-ash/10">
           {[
-            { icon: Truck, title: "Complimentary Shipping", desc: "On every order, worldwide" },
-            { icon: ShieldCheck, title: "Lifetime Warranty", desc: "Assured craftsmanship" },
+           { icon: Truck, title: "Complimentary Shipping", desc: "On orders over $75" },
             { icon: Gem, title: "Ethically Sourced", desc: "Conflict-free materials" },
             { icon: Sparkles, title: "Signature Gift Wrap", desc: "Presented to perfection" },
           ].map(({ icon: Icon, title, desc }) => (
