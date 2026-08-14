@@ -96,7 +96,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                 type="button"
                 onClick={handleClose}
                 aria-label="Close product details"
-                className="absolute top-4 right-4 z-50 p-2 bg-obsidian/10 hover:bg-obsidian hover:text-creme rounded-full transition-colors duration-300"
+                className="absolute top-4 right-4 z-50 p-2 bg-white text-black hover:bg-gray-100 rounded-full transition-colors duration-300 shadow-md"
               >
                 <X size={20} />
               </button>
@@ -201,7 +201,23 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                   )}
                 </div>
 
-                <h2 className="font-serif text-3xl md:text-5xl mb-4 text-black">{product.name}</h2>
+              <div className="flex items-center justify-between gap-4 mb-4">
+  <h2 className="font-serif text-3xl md:text-5xl text-[#5A3215]">
+    {product.name}
+  </h2>
+
+  <button
+    type="button"
+    onClick={() => toggleWishlist(product)}
+    aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+    className="p-2 text-[#5A3215] hover:text-primary transition-colors"
+  >
+    <Heart
+      size={24}
+      className={isWishlisted ? "fill-current" : ""}
+    />
+  </button>
+</div>
                 <p className="text-2xl font-light tracking-wide text-ash mb-8">{product.price}</p>
 
                 <div className="prose prose-sm md:prose-base text-[#5A3215] font-medium mb-12">
@@ -239,17 +255,6 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                     className="w-full py-4 bg-obsidian text-creme tracking-[0.2em] uppercase text-xs font-bold cursor-pointer hover:bg-primary transition-all duration-300 flex justify-center items-center gap-3 shadow-lg"
                   >
                     <ShoppingBag size={16} /> Add to Cart
-                  </button>
-                  <button 
-                    onClick={() => toggleWishlist(product)}
-                    className={`w-full py-4 border tracking-[0.2em] uppercase text-xs font-bold cursor-pointer transition-all duration-300 flex justify-center items-center gap-3 ${
-                      isWishlisted 
-                        ? 'border-primary text-primary bg-primary/5' 
-                        : 'border-ash/40 text-[#5A3215] hover:border-primary hover:text-primary'
-                    }`}
-                  >
-                    <Heart size={16} className={isWishlisted ? "fill-primary" : ""} /> 
-                    {isWishlisted ? "Saved to Wishlist" : "Add to Wishlist"}
                   </button>
                 </div>
               </div>
