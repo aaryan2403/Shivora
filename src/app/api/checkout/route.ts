@@ -22,12 +22,22 @@ export async function POST(request: NextRequest) {
     // Prices are re-read from the database — never trust client-supplied prices.
     const productIds = cart.map((item: CartItem) => item.id).filter((id): id is number => typeof id === "number");
     const { data: dbProducts, error: productsError } = await supabase
-      .from("products").select("id, name, image, price").in("id", productIds);
+      .from("products").select("id, name, image, price, stock").in("id", productIds);
     if (productsError) throw productsError;
-
-    const productById = new Map<number, { name: string; image: string; price: string }>(
-      (dbProducts ?? []).map((p) => [p.id as number, { name: p.name as string, image: p.image as string, price: p.price as string }])
-    );
+const productById = new Map<
+  number,
+  { name: string; image: string; price: string; stock: number | null }
+>(
+  (dbProducts ?? []).map((p) => [
+    p.id as number,
+    {
+      name: p.name as string,
+      image: p.image as string,
+      price: p.price as string,
+      stock: p.stock as number | null,
+    }
+  ])
+);
 
     let computedTotal = 0;
     const validatedItems: { productId: number; quantity: number; price: string }[] = [];
@@ -45,10 +55,16 @@ export async function POST(request: NextRequest) {
       if (typeof item.id !== "number" || !product) {
         return NextResponse.json({ error: `Invalid product in cart: ${String(item.id)}` }, { status: 400 });
       }
-      const quantity = Number(item.quantity);
-      if (!Number.isInteger(quantity) || quantity < 1) {
-        return NextResponse.json({ error: `Invalid quantity for product ${item.id}` }, { status: 400 });
-      }
+     if (product.stock !== null && quantity > product.stock) {
+  return NextResponse.json(
+    {
+      error: `Only ${product.stock} of ${product.name} ${
+        product.stock === 1 ? "is" : "are"
+      } available.`,
+    },
+    { status: 400 }
+  );
+}
       const unitPrice = parsePrice(product.price);
       if (!Number.isFinite(unitPrice)) {
         return NextResponse.json({ error: `Unpriced product ${item.id}` }, { status: 400 });
