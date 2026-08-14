@@ -3,8 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram } from "lucide-react";
+import { useCollections } from "@/hooks/useCollections";
 
 export default function Footer() {
+  const { collections } = useCollections();
+
   return (
     <footer className="bg-obsidian text-creme border-t border-ash/10 pt-16 pb-10 px-6 md:px-12 lg:px-24">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
@@ -23,9 +26,15 @@ export default function Footer() {
         <div className="md:col-span-2 flex flex-col gap-4 text-sm font-medium">
           <h4 className="font-serif text-lg mb-2">Shop</h4>
           <Link href="/collections?category=All" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">All Jewelry</Link>
-          <Link href="/collections?category=Rings" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">Rings</Link>
-          <Link href="/collections?category=Necklaces" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">Necklaces</Link>
-          <Link href="/collections?category=Earrings" className="text-ash cursor-pointer hover:text-creme transition-colors duration-200">Earrings</Link>
+         {collections.map((collection) => (
+  <Link
+    key={collection.id}
+    href={`/collections?category=${encodeURIComponent(collection.name)}`}
+    className="text-ash cursor-pointer hover:text-creme transition-colors duration-200"
+  >
+    {collection.name}
+  </Link>
+))}
         </div>
 
         {/* Assistance Links */}
