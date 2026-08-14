@@ -11,10 +11,17 @@ export async function POST(request: NextRequest) {
     if (!cart || !Array.isArray(cart) || cart.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
-    if (!customerInfo || !customerInfo.email || !customerInfo.firstName) {
-      return NextResponse.json({ error: "Missing customer information" }, { status: 400 });
-    }
-
+    if (
+  !customerInfo ||
+  !customerInfo.email ||
+  !customerInfo.firstName ||
+  !customerInfo.phone
+) {
+  return NextResponse.json(
+    { error: "Missing customer information" },
+    { status: 400 }
+  );
+}
     const parsePrice = (value: unknown): number => typeof value === "string"
       ? parseFloat(value.replace(/[^0-9.]/g, ""))
       : NaN;
@@ -50,29 +57,54 @@ const productById = new Map<
       };
     }> = [];
 
-    for (const item of cart as CartItem[]) {
-      const product = typeof item.id === "number" ? productById.get(item.id) : undefined;
-      if (typeof item.id !== "number" || !product) {
-        return NextResponse.json({ error: `Invalid product in cart: ${String(item.id)}` }, { status: 400 });
-      }
-     if (product.stock !== null && quantity > product.stock) {
-  return NextResponse.json(
-    {
-      error: `Only ${product.stock} of ${product.name} ${
-        product.stock === 1 ? "is" : "are"
-      } available.`,
-    },
-    { status: 400 }
-  );
-}
-      const unitPrice = parsePrice(product.price);
-      if (!Number.isFinite(unitPrice)) {
-        return NextResponse.json({ error: `Unpriced product ${item.id}` }, { status: 400 });
-      }
-      computedTotal += unitPrice * quantity;
-      validatedItems.push({ productId: item.id, quantity, price: product.price });
+   for (const item of cart as CartItem[]) {
+  const product = typeof item.id === "number" ? productById.get(item.id) : undefined;
 
-      const isHttpImage = typeof product.image === "string" && /^https?:\/\//.test(product.image);
+  if (typeof item.id !== "number" || !product) {
+    return NextResponse.json(
+      { error: `Invalid product in cart: ${String(item.id)}` },
+      { status: 400 }
+    );
+  }
+
+  const quantity = Number(item.quantity);
+
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    return NextResponse.json(
+      { error: `Invalid quantity for product ${item.id}` },
+      { status: 400 }
+    );
+  }
+
+  if (product.stock !== null && quantity > product.stock) {
+    return NextResponse.json(
+      {
+        error: `Only ${product.stock} of ${product.name} ${
+          product.stock === 1 ? "is" : "are"
+        } available.`,
+      },
+      { status: 400 }
+    );
+  }
+
+  const unitPrice = parsePrice(product.price);
+
+  if (!Number.isFinite(unitPrice)) {
+    return NextResponse.json(
+      { error: `Unpriced product ${item.id}` },
+      { status: 400 }
+    );
+  }
+
+  computedTotal += unitPrice * quantity;
+
+  validatedItems.push({
+    productId: item.id,
+    quantity,
+    price: product.price,
+  });
+
+  const isHttpImage = typeof product.image === "string" && /^https?:\/\//.test(product.image);
       lineItems.push({
         quantity,
         price_data: {
