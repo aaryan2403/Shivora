@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
     const { data: orderId, error: rpcError } = await supabase.rpc("create_order", {
       p_customer_email: customerInfo.email,
       p_customer_name: `${customerInfo.firstName} ${customerInfo.lastName}`.trim(),
+      p_customer_phone: customerInfo.phone,
       p_shipping_address: customerInfo.address,
       p_city: customerInfo.city,
       p_zip_code: customerInfo.zipCode,
