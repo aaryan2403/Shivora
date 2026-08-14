@@ -244,10 +244,10 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                     <span className="block text-ash text-xs uppercase tracking-widest mb-1">Availability</span>
                     <span className="font-semibold text-[#5A3215]">Made to Order</span>
                   </div>
-                  <div>
-                    <span className="block text-ash text-xs uppercase tracking-widest mb-1">Shipping</span>
-                    <span className="font-semibold text-[#5A3215]">Complimentary Global</span>
-                  </div>
+                 <div>
+  <span className="block text-ash text-xs uppercase tracking-widest mb-1">Shipping</span>
+  <span className="font-semibold text-[#5A3215]">Shipping Available</span>
+</div>
                 </div>
 
                {/* Actions */}
