@@ -146,6 +146,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false);
 
 // Load the global theme from Supabase
+// Load and keep the global theme synced across all devices
 useEffect(() => {
   const loadTheme = async () => {
     const { data, error } = await supabase
@@ -154,14 +155,38 @@ useEffect(() => {
       .eq("key", "active_theme")
       .single();
 
-    if (!error && data?.value && themes.find((t) => t.id === data.value)) {
+    if (error) {
+      console.error("Failed to load global theme:", error);
+      setIsHydrated(true);
+      return;
+    }
+
+    if (data?.value && themes.some((theme) => theme.id === data.value)) {
       setActiveThemeId(data.value);
     }
 
     setIsHydrated(true);
   };
 
+  // Load immediately
   void loadTheme();
+
+  // Check Supabase every 5 seconds for a theme change
+  const interval = window.setInterval(() => {
+    void loadTheme();
+  }, 5000);
+
+  // Also refresh immediately when someone returns to the tab
+  const handleFocus = () => {
+    void loadTheme();
+  };
+
+  window.addEventListener("focus", handleFocus);
+
+  return () => {
+    window.clearInterval(interval);
+    window.removeEventListener("focus", handleFocus);
+  };
 }, []);
 
   const activeTheme = useMemo(
@@ -181,22 +206,30 @@ useEffect(() => {
     applyCssVariables(themeToApply.colors);
   }, [activeTheme, previewTheme, isHydrated]);
 
- const applyTheme = useCallback((id: string) => {
+const applyTheme = useCallback((id: string) => {
   setActiveThemeId(id);
   setPreviewThemeId(null);
 
-  void supabase
-    .from("site_settings")
-    .upsert(
-      {
-        key: "active_theme",
-        value: id,
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "key",
-      }
-    );
+  const saveTheme = async () => {
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert(
+        {
+          key: "active_theme",
+          value: id,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "key",
+        }
+      );
+
+    if (error) {
+      console.error("Failed to save global theme:", error);
+    }
+  };
+
+  void saveTheme();
 }, []);
 
   const confirmPreview = useCallback(() => {
