@@ -63,14 +63,59 @@ export default function CartSidebar() {
                     <div className="flex-1 flex flex-col justify-center">
                       <h4 className="font-serif text-lg mb-1">{item.name}</h4>
                       <p className="text-sm text-ash mb-3">{item.price}</p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 text-xs tracking-widest border border-ash/10 px-3 py-1 rounded-full">
-                          <button type="button" onClick={() => updateCartQuantity(item.id, -1)} aria-label="Decrease quantity" className="text-ash cursor-pointer hover:text-creme w-4 h-4 flex items-center justify-center transition-colors duration-200">-</button>
-                          <span>{item.quantity}</span>
-                          <button type="button" onClick={() => updateCartQuantity(item.id, 1)} aria-label="Increase quantity" className="text-ash cursor-pointer hover:text-creme w-4 h-4 flex items-center justify-center transition-colors duration-200">+</button>
-                        </div>
-                        <button type="button" onClick={() => removeFromCart(item.id)} aria-label="Remove item" className="text-[10px] uppercase tracking-widest text-ash cursor-pointer hover:text-primary transition-colors duration-200">Remove</button>
-                      </div>
+                    <div className="space-y-2">
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-4 text-xs tracking-widest border border-ash/10 px-3 py-1 rounded-full">
+      <button
+        type="button"
+        onClick={() => updateCartQuantity(item.id, -1)}
+        aria-label="Decrease quantity"
+        className="text-ash cursor-pointer hover:text-creme w-4 h-4 flex items-center justify-center transition-colors duration-200"
+      >
+        -
+      </button>
+
+      <span>{item.quantity}</span>
+
+      <button
+        type="button"
+        onClick={() => updateCartQuantity(item.id, 1)}
+        disabled={item.quantity >= (item.stock ?? 0)}
+        aria-label="Increase quantity"
+        className="text-ash cursor-pointer hover:text-creme disabled:opacity-30 disabled:cursor-not-allowed w-4 h-4 flex items-center justify-center transition-colors duration-200"
+      >
+        +
+      </button>
+    </div>
+
+    <button
+      type="button"
+      onClick={() => removeFromCart(item.id)}
+      aria-label="Remove item"
+      className="text-[10px] uppercase tracking-widest text-ash cursor-pointer hover:text-primary transition-colors duration-200"
+    >
+      Remove
+    </button>
+  </div>
+
+  <p className={`text-[11px] ${
+    (item.stock ?? 0) === 0
+      ? "text-red-400"
+      : item.quantity >= (item.stock ?? 0)
+      ? "text-yellow-400"
+      : "text-ash"
+  }`}>
+    {(item.stock ?? 0) === 0
+      ? "Out of stock"
+      : `${item.stock ?? 0} available`}
+  </p>
+
+  {item.quantity >= (item.stock ?? 0) && (item.stock ?? 0) > 0 && (
+    <p className="text-[11px] text-yellow-400">
+      Maximum available stock reached.
+    </p>
+  )}
+</div>
                     </div>
                   </div>
                 ))
