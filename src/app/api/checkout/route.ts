@@ -117,7 +117,27 @@ const productById = new Map<
         },
       });
     }
+const shippingAmount =
+  computedTotal >= 75
+    ? 0
+    : computedTotal >= 50
+    ? 7.99
+    : 9.99;
 
+const finalTotal = computedTotal + shippingAmount;
+
+if (shippingAmount > 0) {
+  lineItems.push({
+    quantity: 1,
+    price_data: {
+      currency: CURRENCY,
+      unit_amount: Math.round(shippingAmount * 100),
+      product_data: {
+        name: "Shipping",
+      },
+    },
+  });
+}
     // 1) Create the order up front in an "unpaid" state so we have an id to
     //    attach to the Stripe session. The webhook flips it to paid.
     const { data: orderId, error: rpcError } = await supabase.rpc("create_order", {
@@ -127,7 +147,7 @@ const productById = new Map<
       p_shipping_address: customerInfo.address,
       p_city: customerInfo.city,
       p_zip_code: customerInfo.zipCode,
-      p_total_amount: `$${computedTotal.toLocaleString("en-US")}`,
+      p_total_amount: `$${finalTotal.toFixed(2)}`,
       p_items: validatedItems.map((item) => ({ product_id: item.productId, quantity: item.quantity, price_at_time: item.price })),
     });
     if (rpcError) throw rpcError;
