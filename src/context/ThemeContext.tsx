@@ -148,29 +148,35 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 // Load the global theme from Supabase
 // Load and keep the global theme synced across all devices
 useEffect(() => {
-  const loadTheme = async () => {
-    const { data, error } = await supabase
-      .from("site_settings")
-      .select("value")
-      .eq("key", "active_theme")
-      .single();
+  const loadTheme = async (showInitialLoader = false) => {
+  const startTime = Date.now();
 
-    if (error) {
-      console.error("Failed to load global theme:", error);
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "active_theme")
+    .single();
+
+  if (error) {
+    console.error("Failed to load global theme:", error);
+  }
+
+  if (data?.value && themes.some((theme) => theme.id === data.value)) {
+    setActiveThemeId(data.value);
+  }
+
+  if (showInitialLoader) {
+    const elapsed = Date.now() - startTime;
+    const remainingTime = Math.max(0, 2000 - elapsed);
+
+    window.setTimeout(() => {
       setIsHydrated(true);
-      return;
-    }
+    }, remainingTime);
+  }
+};
 
-    if (data?.value && themes.some((theme) => theme.id === data.value)) {
-      setActiveThemeId(data.value);
-    }
-
-    setIsHydrated(true);
-  };
-
-  // Load immediately
-  void loadTheme();
-
+// Load immediately — loading screen stays for minimum 2 seconds
+void loadTheme(true);
   // Check Supabase every 5 seconds for a theme change
   const interval = window.setInterval(() => {
     void loadTheme();
