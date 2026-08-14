@@ -7,10 +7,13 @@ import Image from "next/image";
 import { Search, User as UserIcon, Heart, ShoppingCart, LogIn, LogOut, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useShop } from "../context/ShopContext";
+import { useCollections } from "@/hooks/useCollections";
 
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const { collections } = useCollections();
+
   const {
     cart,
     wishlist,
@@ -92,9 +95,15 @@ export default function Navbar() {
           <Link href="/collections" className="cursor-pointer hover:opacity-100 opacity-70 transition-opacity duration-300 block py-2">Collections</Link>
           <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
             <div className="bg-obsidian/95 backdrop-blur-md border border-ash/10 shadow-xl rounded-sm py-2 min-w-[160px]">
-              <Link href="/collections?category=Necklaces" className="block px-5 py-2.5 text-[11px] tracking-[0.15em] text-ash hover:text-creme hover:bg-primary/10 transition-colors duration-200">Necklaces</Link>
-              <Link href="/collections?category=Bracelets" className="block px-5 py-2.5 text-[11px] tracking-[0.15em] text-ash hover:text-creme hover:bg-primary/10 transition-colors duration-200">Bracelets</Link>
-              <Link href="/collections?category=Rings" className="block px-5 py-2.5 text-[11px] tracking-[0.15em] text-ash hover:text-creme hover:bg-primary/10 transition-colors duration-200">Rings</Link>
+             {collections.map((collection) => (
+  <Link
+    key={collection.id}
+    href={`/collections?category=${encodeURIComponent(collection.name)}`}
+    className="block px-5 py-2.5 text-[11px] tracking-[0.15em] text-ash hover:text-creme hover:bg-primary/10 transition-colors duration-200"
+  >
+    {collection.name}
+  </Link>
+))}
             </div>
           </div>
         </div>
