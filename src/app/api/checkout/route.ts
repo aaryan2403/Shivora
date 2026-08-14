@@ -87,14 +87,19 @@ export async function POST(request: NextRequest) {
     const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
 
     const session = await getStripe().checkout.sessions.create({
-      mode: "payment",
-      line_items: lineItems,
-      customer_email: customerInfo.email,
-      client_reference_id: String(orderId),
-      metadata: { order_id: String(orderId) },
-      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/checkout?canceled=1`,
-    });
+  mode: "payment",
+
+  invoice_creation: {
+    enabled: true,
+  },
+
+  line_items: lineItems,
+  customer_email: customerInfo.email,
+  client_reference_id: String(orderId),
+  metadata: { order_id: String(orderId) },
+  success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+  cancel_url: `${origin}/checkout?canceled=1`,
+});
 
     return NextResponse.json({ success: true, orderId, url: session.url });
   } catch (error: unknown) {
