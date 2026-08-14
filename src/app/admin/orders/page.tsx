@@ -21,6 +21,7 @@ type Order = {
   id: number;
   customer_name: string;
   customer_email: string;
+  customer_phone: string | null;
   shipping_address: string;
   city: string;
   zip_code: string;
@@ -167,9 +168,10 @@ export default function AdminOrdersPage() {
                       {new Date(order.created_at).toLocaleString()}
                     </p>
                     <div className="text-sm space-y-1">
-                      <p><span className="text-ash">Customer:</span> {order.customer_name}</p>
-                      <p><span className="text-ash">Email:</span> {order.customer_email}</p>
-                      <p><span className="text-ash">Address:</span> {order.shipping_address}, {order.city} {order.zip_code}</p>
+<p><span className="text-ash">Customer:</span> {order.customer_name}</p>
+<p><span className="text-ash">Email:</span> {order.customer_email}</p>
+<p><span className="text-ash">Phone:</span> {order.customer_phone || "Not provided"}</p>
+<p><span className="text-ash">Address:</span> {order.shipping_address}, {order.city} {order.zip_code}</p>
                     </div>
                   </div>
                   
