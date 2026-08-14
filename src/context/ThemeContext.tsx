@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export interface Theme {
   id: string;
@@ -124,7 +125,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const STORAGE_KEY = "shivora_theme";
+const supabase = createClient();
 
 function applyCssVariables(colors: Theme["colors"]) {
   if (typeof document === "undefined") return;
@@ -144,16 +145,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [previewThemeId, setPreviewThemeId] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load saved theme on mount
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved && themes.find((t) => t.id === saved)) {
-        setActiveThemeId(saved);
-      }
-      setIsHydrated(true);
+// Load the global theme from Supabase
+useEffect(() => {
+  const loadTheme = async () => {
+    const { data, error } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "active_theme")
+      .single();
+
+    if (!error && data?.value && themes.find((t) => t.id === data.value)) {
+      setActiveThemeId(data.value);
     }
-  }, []);
+
+    setIsHydrated(true);
+  };
+
+  void loadTheme();
+}, []);
 
   const activeTheme = useMemo(
     () => themes.find((t) => t.id === activeThemeId) || themes[0],
@@ -172,13 +181,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     applyCssVariables(themeToApply.colors);
   }, [activeTheme, previewTheme, isHydrated]);
 
-  const applyTheme = useCallback((id: string) => {
-    setActiveThemeId(id);
-    setPreviewThemeId(null);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, id);
-    }
-  }, []);
+ const applyTheme = useCallback((id: string) => {
+  setActiveThemeId(id);
+  setPreviewThemeId(null);
+
+  void supabase
+    .from("site_settings")
+    .upsert(
+      {
+        key: "active_theme",
+        value: id,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "key",
+      }
+    );
+}, []);
 
   const confirmPreview = useCallback(() => {
     if (previewThemeId) {
