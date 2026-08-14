@@ -136,30 +136,47 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   // user state is managed via Supabase auth — no localStorage needed for user
 
-  const addToCart = (product: Product) => {
-    setCart(prev => {
-      const exists = prev.find(item => item.id === product.id);
-      if (exists) {
-        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-    setIsCartOpen(true);
-  };
+const addToCart = (product: Product) => {
+  if ((product.stock ?? 0) <= 0) {
+    return;
+  }
+
+  setCart(prev => {
+    const exists = prev.find(item => item.id === product.id);
+
+    // Product is already in cart — don't automatically increase it.
+    if (exists) {
+      return prev;
+    }
+
+    // New product always starts at quantity 1.
+    return [...prev, { ...product, quantity: 1 }];
+  });
+
+  setIsCartOpen(true);
+};
 
   const removeFromCart = (id: number) => {
     setCart(prev => prev.filter(item => item.id !== id));
   };
 
-  const updateCartQuantity = (id: number, delta: number) => {
-    setCart(prev => prev.map(item => {
-      if (item.id === id) {
-        return { ...item, quantity: Math.max(1, item.quantity + delta) };
-      }
-      return item;
-    }));
-  };
+const updateCartQuantity = (id: number, delta: number) => {
+  setCart(prev => prev.map(item => {
+    if (item.id === id) {
+      const maxStock = item.stock ?? 1;
 
+      return {
+        ...item,
+        quantity: Math.min(
+          maxStock,
+          Math.max(1, item.quantity + delta)
+        ),
+      };
+    }
+
+    return item;
+  }));
+};
   // Memoized so consumers can safely use it as an effect dependency.
   const clearCart = useCallback(() => {
     setCart([]);
