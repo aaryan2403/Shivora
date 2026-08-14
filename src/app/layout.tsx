@@ -3,7 +3,6 @@ import { Cormorant, Montserrat, Cinzel } from "next/font/google";
 import "./globals.css";
 import { ShopProvider } from "../context/ShopContext";
 import { ThemeProvider } from "../context/ThemeContext";
-import AnnouncementBar from "../components/AnnouncementBar";
 import Navbar from "../components/Navbar";
 import NavbarSpacer from "../components/NavbarSpacer";
 import SearchOverlay from "../components/SearchOverlay";
