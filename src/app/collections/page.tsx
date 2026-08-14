@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ShoppingBag, Heart } from "lucide-react";
+import { ShoppingBag, Heart, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useShop } from "../../context/ShopContext";
 import { useProducts } from "@/lib/useProducts";
@@ -39,8 +39,19 @@ const filters = ["All", ...collections.map((collection) => collection.name)];
 
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 pt-4">
-        <div className="text-center mb-16">
+     <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 pt-4">
+
+  <div className="mb-8">
+    <Link
+      href="/"
+      className="inline-flex items-center gap-2 text-ash hover:text-creme transition-colors duration-300 text-xs uppercase tracking-[0.2em]"
+    >
+      <ArrowLeft size={16} />
+      Back to Home
+    </Link>
+  </div>
+
+  <div className="text-center mb-16">
           <span className="eyebrow block mb-4">Catalogue</span>
           <h1 className="font-serif text-4xl md:text-5xl mb-5">The Collections</h1>
           <div className="w-14 h-px bg-ash/30 mx-auto mb-5" />
