@@ -213,25 +213,20 @@ const applyTheme = useCallback((id: string) => {
   const saveTheme = async () => {
     const { error } = await supabase
       .from("site_settings")
-      .upsert(
-        {
-          key: "active_theme",
-          value: id,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: "key",
-        }
-      );
+      .update({
+        value: id,
+      })
+      .eq("key", "active_theme");
 
     if (error) {
       console.error("Failed to save global theme:", error);
+    } else {
+      console.log("Global theme saved:", id);
     }
   };
 
   void saveTheme();
 }, []);
-
   const confirmPreview = useCallback(() => {
     if (previewThemeId) {
       applyTheme(previewThemeId);
