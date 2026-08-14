@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, ShoppingBag, Heart } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useShop, Product } from "../context/ShopContext";
 
 interface ProductModalProps {
@@ -13,7 +14,8 @@ interface ProductModalProps {
 }
 
 export default function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
-  const { addToCart, toggleWishlist, wishlist } = useShop();
+  const router = useRouter();
+  const { addToCart, toggleWishlist, wishlist, setIsCartOpen } = useShop();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -248,15 +250,33 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex flex-col gap-4 mt-auto">
-                  <button 
-                    onClick={() => { addToCart(product); onClose(); }}
-                    className="w-full py-4 bg-obsidian text-creme tracking-[0.2em] uppercase text-xs font-bold cursor-pointer hover:bg-primary transition-all duration-300 flex justify-center items-center gap-3 shadow-lg"
-                  >
-                    <ShoppingBag size={16} /> Add to Cart
-                  </button>
-                </div>
+               {/* Actions */}
+<div className="flex flex-col gap-4 mt-auto">
+
+  <button 
+    onClick={() => { 
+      addToCart(product); 
+      onClose(); 
+    }}
+    className="w-full py-4 bg-obsidian text-creme tracking-[0.2em] uppercase text-xs font-bold cursor-pointer hover:bg-primary transition-all duration-300 flex justify-center items-center gap-3 shadow-lg"
+  >
+    <ShoppingBag size={16} /> Add to Cart
+  </button>
+
+  <button
+    type="button"
+    onClick={() => {
+      addToCart(product);
+      setIsCartOpen(false);
+      onClose();
+      router.push("/checkout");
+    }}
+    className="w-full py-4 bg-[#5A3215] text-white tracking-[0.2em] uppercase text-xs font-bold cursor-pointer hover:opacity-90 transition-all duration-300 flex justify-center items-center gap-3 shadow-lg"
+  >
+    Buy Now
+  </button>
+
+</div>
               </div>
             </motion.div>
           </div>
