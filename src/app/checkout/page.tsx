@@ -37,14 +37,24 @@ export default function CheckoutPage() {
     setIsFormValid(allFieldsFilled && termsAccepted);
   }, [formData, termsAccepted]);
 
-  const cartTotal = useMemo(() => {
-    return cart.reduce((total, item) => {
-      const price = Number(item.price.replace(/[$,]/g, ''));
-      if (isNaN(price)) return total;
-      return total + price * item.quantity;
-    }, 0);
-  }, [cart]);
+const cartTotal = useMemo(() => {
+  return cart.reduce((total, item) => {
+    const price = Number(item.price.replace(/[$,]/g, ''));
+    if (isNaN(price)) return total;
+    return total + price * item.quantity;
+  }, 0);
+}, [cart]);
 
+const shipping =
+  cartTotal >= 75
+    ? 0
+    : cartTotal >= 50
+    ? 7.99
+    : 9.99;
+
+const grandTotal = cartTotal + shipping;
+
+const amountUntilFreeShipping = Math.max(0, 75 - cartTotal);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -224,7 +234,7 @@ export default function CheckoutPage() {
             >
               {isSubmitting ? "Redirecting to secure payment..." : (
                 <>
-                  <Lock size={14} /> Continue to Payment &mdash; ${cartTotal.toLocaleString()}
+                  <Lock size={14} /> Continue to Payment &mdash; ${grandTotal.toFixed(2)}
                 </>
               )}
             </button>
@@ -263,12 +273,14 @@ export default function CheckoutPage() {
                 <span>${cartTotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-ash">
-                <span>Insured Shipping</span>
-                <span>Complimentary</span>
-              </div>
+  <span>Shipping</span>
+  <span>
+    {shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}
+  </span>
+</div>
               <div className="flex justify-between text-lg pt-4 border-t border-ash/10 font-serif">
                 <span>Total</span>
-                <span>${cartTotal.toLocaleString()}</span>
+              <span>${grandTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>
