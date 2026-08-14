@@ -21,13 +21,24 @@ export default function CartSidebar() {
     }
   }, [isCartOpen, handleEscape]);
 
-  const cartTotal = useMemo(() => {
-    return cart.reduce((total, item) => {
-      const price = Number(item.price.replace(/[$,]/g, ''));
-      if (isNaN(price)) return total;
-      return total + price * item.quantity;
-    }, 0);
-  }, [cart]);
+ const cartTotal = useMemo(() => {
+  return cart.reduce((total, item) => {
+    const price = Number(item.price.replace(/[$,]/g, ''));
+    if (isNaN(price)) return total;
+    return total + price * item.quantity;
+  }, 0);
+}, [cart]);
+
+const shipping =
+  cartTotal >= 75
+    ? 0
+    : cartTotal >= 50
+    ? 7.99
+    : 9.99;
+
+const grandTotal = cartTotal + shipping;
+
+const amountUntilFreeShipping = Math.max(0, 75 - cartTotal);
 
   return (
     <AnimatePresence>
@@ -124,10 +135,38 @@ export default function CartSidebar() {
 
             {cart.length > 0 && (
               <div className="pt-8 border-t border-ash/10 mt-auto">
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-ash uppercase tracking-widest text-xs">Total</span>
-                  <span className="font-serif text-2xl">${cartTotal.toLocaleString()}</span>
-                </div>
+               <div className="flex justify-between items-center mb-3">
+  <span className="text-ash uppercase tracking-widest text-xs">Subtotal</span>
+  <span className="font-serif text-lg">${cartTotal.toFixed(2)}</span>
+</div>
+
+<div className="flex justify-between items-center mb-3">
+  <span className="text-ash uppercase tracking-widest text-xs">Shipping</span>
+  <span className="font-serif text-lg">
+    {shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}
+  </span>
+</div>
+
+<div className="flex justify-between items-center mb-4 pt-3 border-t border-ash/10">
+  <span className="text-ash uppercase tracking-widest text-xs">Total</span>
+  <span className="font-serif text-2xl">${grandTotal.toFixed(2)}</span>
+</div>
+
+<div className="mb-5 text-center">
+  {amountUntilFreeShipping > 0 ? (
+    <p className="text-xs text-ash tracking-wide">
+      Add{" "}
+      <span className="font-semibold text-primary">
+        ${amountUntilFreeShipping.toFixed(2)}
+      </span>{" "}
+      more for FREE shipping
+    </p>
+  ) : (
+    <p className="text-xs text-primary font-semibold tracking-wide">
+      You've unlocked FREE shipping!
+    </p>
+  )}
+</div>
                 <Link
   href="/checkout"
   onClick={() => setIsCartOpen(false)}
