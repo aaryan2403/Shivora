@@ -83,9 +83,13 @@ export default function CartSidebar() {
                   <span className="text-ash uppercase tracking-widest text-xs">Total</span>
                   <span className="font-serif text-2xl">${cartTotal.toLocaleString()}</span>
                 </div>
-                <Link href="/checkout" className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-all duration-300 flex justify-center items-center">
-                  Checkout Securely
-                </Link>
+                <Link
+  href="/checkout"
+  onClick={() => setIsCartOpen(false)}
+  className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-all duration-300 flex justify-center items-center"
+>
+  Checkout Securely
+</Link>
               </div>
             )}
           </motion.div>
