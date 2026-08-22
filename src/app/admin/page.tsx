@@ -31,7 +31,6 @@ import {
   Github,
   Sparkles,
   Eye,
-  Palette,
   Tag,
   Layers,
   DollarSign,
@@ -188,7 +187,6 @@ export default function AdminPage() {
   const [formPrice, setFormPrice] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formStock, setFormStock] = useState<number | "">("");
-  const [formColor, setFormColor] = useState("");
   const [formImages, setFormImages] = useState<string[]>([]);
   const [imageUrlInput, setImageUrlInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -259,7 +257,6 @@ export default function AdminPage() {
     setFormPrice("");
     setFormDescription("");
     setFormStock("");
-    setFormColor("");
     setFormImages([]);
     setImageUrlInput("");
     setEditingProduct(null);
@@ -445,7 +442,6 @@ export default function AdminPage() {
     setFormPrice(product.price);
     setFormDescription(product.description || "");
     setFormStock(product.stock ?? "");
-    setFormColor(product.color || "");
     setFormImages(product.images || [product.image]);
     setImageUrlInput("");
     setIsEditorOpen(true);
@@ -522,7 +518,6 @@ export default function AdminPage() {
   price: formPrice,
         description: formDescription,
         stock: formStock === "" ? null : Number(formStock),
-        color: formColor || null,
         image: formImages[0],
         images: formImages,
       };
@@ -925,15 +920,8 @@ export default function AdminPage() {
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     />
-                    {product.color && (
-                      <div
-                        className="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-white/20 shadow-sm"
-                        style={{ backgroundColor: product.color }}
-                        title={`Color: ${product.color}`}
-                      />
-                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-obsidian/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute bottom-3 left-3 right-3 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="absolute bottom-3 left-3 right-3 flex gap-2 translate-y-0 opacity-100 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300">
                       <button
                         onClick={() => openEditProduct(product)}
                         className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-creme/90 text-obsidian text-[10px] uppercase tracking-[0.15em] font-semibold hover:bg-creme transition-colors backdrop-blur-sm"
@@ -1115,32 +1103,6 @@ export default function AdminPage() {
                   />
                 </section>
 
-                {/* Color */}
-                <section>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Palette size={13} className="text-primary" />
-                    <h3 className="text-[10px] uppercase tracking-[0.25em] text-primary">Product Color</h3>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="color"
-                      value={formColor || "#e3b388"}
-                      onChange={(e) => setFormColor(e.target.value)}
-                      className="w-12 h-12 rounded-sm border border-ash/20 cursor-pointer bg-transparent"
-                    />
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        value={formColor}
-                        onChange={(e) => setFormColor(e.target.value)}
-                        placeholder="#e3b388"
-                        className="w-full bg-obsidian/40 border border-ash/20 px-4 py-3 text-sm text-creme outline-none focus:border-primary/50 transition-colors placeholder:text-ash/30 font-mono"
-                      />
-                      <p className="text-[10px] text-ash/60 mt-1">Hex color code for product display</p>
-                    </div>
-                  </div>
-                </section>
-
                 {/* Images */}
                 <section>
                   <div className="flex items-center gap-2 mb-4">
@@ -1161,7 +1123,7 @@ export default function AdminPage() {
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={img} alt="" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-obsidian/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                          <div className="absolute inset-0 bg-obsidian/60 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
                             <button
                               onClick={() => moveImage(idx, -1)}
                               disabled={idx === 0}
