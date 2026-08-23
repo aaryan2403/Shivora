@@ -89,18 +89,17 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   // Open auth and remember where the customer should go after a successful sign-in.
-  const requestAuth = useCallback((redirectTo?: string) => {
-    if (typeof window !== "undefined") {
-      if (redirectTo) {
-        sessionStorage.setItem(AUTH_REDIRECT_KEY, redirectTo);
-      } else {
-        sessionStorage.removeItem(AUTH_REDIRECT_KEY);
-      }
+ const requestAuth = useCallback((redirectTo?: string) => {
+  if (typeof window !== "undefined") {
+    if (redirectTo) {
+      sessionStorage.setItem(AUTH_REDIRECT_KEY, redirectTo);
+    } else {
+      sessionStorage.removeItem(AUTH_REDIRECT_KEY);
     }
+  }
 
-requestAuth("/checkout");
-  }, []);
-
+  setIsAuthOpen(true);
+}, []);
   // After authentication succeeds, continue to the page that originally required login.
   const continueAfterAuth = useCallback(() => {
     if (typeof window === "undefined") return;
