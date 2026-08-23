@@ -203,22 +203,25 @@ export default function Navbar() {
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="md:hidden absolute top-full left-0 w-full bg-obsidian/97 backdrop-blur-lg border-b border-ash/10 shadow-2xl px-6 py-6 flex flex-col gap-1"
           >
-            {[
-              { label: "All Collections", href: "/collections" },
-              { label: "Necklaces", href: "/collections?category=Necklaces" },
-              { label: "Bracelets", href: "/collections?category=Bracelets" },
-              { label: "Rings", href: "/collections?category=Rings" },
-              { label: "Earrings", href: "/collections?category=Earrings" },
-            ].map((item) => (
+            <Link
+              href="/collections"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="py-3 text-xs tracking-[0.2em] uppercase font-bold text-ash hover:text-creme border-b border-ash/10 transition-colors"
+            >
+              All Collections
+            </Link>
+
+            {collections.map((collection) => (
               <Link
-                key={item.label}
-                href={item.href}
+                key={collection.id}
+                href={`/collections?category=${encodeURIComponent(collection.name)}`}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="py-3 text-xs tracking-[0.2em] uppercase font-bold text-ash hover:text-creme border-b border-ash/10 transition-colors"
               >
-                {item.label}
+                {collection.name}
               </Link>
             ))}
+
             <div className="pt-4">
               {user ? (
                 <div className="flex flex-col gap-1">
