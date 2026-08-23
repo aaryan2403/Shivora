@@ -18,7 +18,7 @@ export default function CheckoutPage() {
   zipCode: "",
 });
 
-  const { cart } = useShop();
+  const { cart, user, requestAuth } = useShop();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,6 +30,12 @@ export default function CheckoutPage() {
       setCanceled(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (user === null) {
+      requestAuth("/checkout");
+    }
+  }, [user, requestAuth]);
 
   useEffect(() => {
     // Check if all fields have some value
@@ -91,6 +97,18 @@ const amountUntilFreeShipping = Math.max(0, 75 - cartTotal);
       setIsSubmitting(false);
     }
   };
+
+  if (!user) {
+    return (
+      <main className="min-h-screen bg-obsidian text-creme flex items-center justify-center px-6">
+        <div className="text-center">
+          <p className="text-ash text-sm">
+            Please sign in or create an account to continue to checkout.
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-obsidian text-creme selection:bg-ash selection:text-obsidian pb-20">
