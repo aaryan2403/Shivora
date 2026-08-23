@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, ShoppingBag, Heart } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useShop, Product } from "../context/ShopContext";
 
 interface ProductModalProps {
@@ -13,6 +14,7 @@ interface ProductModalProps {
 }
 
 export default function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
+  const router = useRouter();
   const {
     addToCart,
     toggleWishlist,
@@ -271,16 +273,23 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
   <button
     type="button"
     onClick={() => {
+      // Put the selected item in the cart first.
       addToCart(product);
+
+      // addToCart normally opens the cart sidebar; Buy Now should not.
       setIsCartOpen(false);
-      onClose();
 
       if (!user) {
+        // Open the SAME Shivora Create Account / Sign In modal.
+        // Do not navigate to /checkout until authentication succeeds.
         requestAuth("/checkout");
+        onClose();
         return;
       }
 
-      window.location.href = "/checkout";
+      // Already signed in: close the product modal and go straight to checkout.
+      onClose();
+      router.push("/checkout");
     }}
     className="w-full py-4 bg-[#5A3215] text-white tracking-[0.2em] uppercase text-xs font-bold cursor-pointer hover:opacity-90 transition-all duration-300 flex justify-center items-center gap-3 shadow-lg"
   >
