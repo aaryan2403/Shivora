@@ -4,11 +4,18 @@ import { useMemo, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useShop } from "../context/ShopContext";
 
 export default function CartSidebar() {
-  const { cart, isCartOpen, setIsCartOpen, updateCartQuantity, removeFromCart } = useShop();
+  const {
+  cart,
+  user,
+  isCartOpen,
+  setIsCartOpen,
+  setIsAuthOpen,
+  updateCartQuantity,
+  removeFromCart,
+} = useShop();
 
   const handleEscape = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") setIsCartOpen(false);
@@ -167,13 +174,22 @@ const amountUntilFreeShipping = Math.max(0, 75 - cartTotal);
     </p>
   )}
 </div>
-                <Link
-  href="/checkout"
-  onClick={() => setIsCartOpen(false)}
+                <button
+  type="button"
+  onClick={() => {
+    if (!user) {
+      setIsCartOpen(false);
+      setIsAuthOpen(true);
+      return;
+    }
+
+    setIsCartOpen(false);
+    window.location.href = "/checkout";
+  }}
   className="w-full py-4 bg-creme text-obsidian tracking-[0.2em] uppercase text-xs font-semibold cursor-pointer hover:bg-primary hover:text-creme transition-all duration-300 flex justify-center items-center"
 >
   Checkout Securely
-</Link>
+</button>
               </div>
             )}
           </motion.div>
