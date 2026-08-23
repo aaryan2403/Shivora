@@ -24,6 +24,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [canceled, setCanceled] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("canceled")) {
@@ -32,10 +33,30 @@ export default function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    if (user === null) {
+    let mounted = true;
+
+    const checkAuth = async () => {
+      const { createClient } = await import("@/lib/supabase/client");
+      const supabase = createClient();
+      await supabase.auth.getUser();
+
+      if (mounted) {
+        setAuthChecked(true);
+      }
+    };
+
+    checkAuth();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (authChecked && user === null) {
       requestAuth("/checkout");
     }
-  }, [user, requestAuth]);
+  }, [authChecked, user, requestAuth]);
 
   useEffect(() => {
     // Check if all fields have some value
@@ -98,12 +119,12 @@ const amountUntilFreeShipping = Math.max(0, 75 - cartTotal);
     }
   };
 
-  if (!user) {
+  if (!authChecked || !user) {
     return (
       <main className="min-h-screen bg-obsidian text-creme flex items-center justify-center px-6">
         <div className="text-center">
           <p className="text-ash text-sm">
-            Please sign in or create an account to continue to checkout.
+            {!authChecked ? "Checking your account..." : "Create an account or sign in to continue to checkout."}
           </p>
         </div>
       </main>
