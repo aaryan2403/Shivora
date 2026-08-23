@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, ShoppingBag, Heart } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useShop, Product } from "../context/ShopContext";
 
 interface ProductModalProps {
@@ -14,8 +13,14 @@ interface ProductModalProps {
 }
 
 export default function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
-  const router = useRouter();
-  const { addToCart, toggleWishlist, wishlist, setIsCartOpen } = useShop();
+  const {
+    addToCart,
+    toggleWishlist,
+    wishlist,
+    setIsCartOpen,
+    user,
+    requestAuth,
+  } = useShop();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -269,7 +274,13 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
       addToCart(product);
       setIsCartOpen(false);
       onClose();
-      router.push("/checkout");
+
+      if (!user) {
+        requestAuth("/checkout");
+        return;
+      }
+
+      window.location.href = "/checkout";
     }}
     className="w-full py-4 bg-[#5A3215] text-white tracking-[0.2em] uppercase text-xs font-bold cursor-pointer hover:opacity-90 transition-all duration-300 flex justify-center items-center gap-3 shadow-lg"
   >
