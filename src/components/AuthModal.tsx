@@ -51,22 +51,22 @@ export default function AuthModal() {
 
     try {
       /* ───────── LOGIN ───────── */
+if (mode === "login") {
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-      if (mode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+  if (error) {
+    setError(error.message);
+    return;
+  }
 
-        if (error) {
-          setError(error.message);
-          return;
-        }
-
-        setIsAuthOpen(false);
-        return;
-      }
-
+  // ShopContext detects the successful login
+  // and automatically continues to checkout if needed.
+  setIsAuthOpen(false);
+  return;
+}
       /* ───────── REGISTER ───────── */
 
       if (mode === "register") {
