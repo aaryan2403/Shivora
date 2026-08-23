@@ -193,7 +193,7 @@ if (mode === "login") {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-obsidian/80 backdrop-blur-sm z-[150]"
+            className="fixed inset-0 bg-obsidian/80 backdrop-blur-sm z-[300]"
             onClick={() => setIsAuthOpen(false)}
           />
 
@@ -222,7 +222,7 @@ if (mode === "login") {
             role="dialog"
             aria-modal="true"
             aria-labelledby="auth-title"
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-32px)] max-w-md max-h-[90vh] overflow-y-auto bg-obsidian border border-ash/10 z-[160] p-7 md:p-12 shadow-2xl rounded-sm"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-32px)] max-w-md max-h-[90vh] overflow-y-auto bg-obsidian border border-ash/10 z-[310] p-7 md:p-12 shadow-2xl rounded-sm"
           >
             {/* CLOSE */}
 
